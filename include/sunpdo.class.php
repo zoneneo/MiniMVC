@@ -24,17 +24,17 @@ class SunPdo extends PDO {
     //用外部定义的变量初始类，并连接数据库 //PDO::__construct ( string $dsn [, string $username [, string $password [, array $driver_options ]]] )
     function __construct() 
     {
-		$this->dbHost   =  $GLOBALS['cfg_dbhost'];
+        $this->dbHost   =  $GLOBALS['cfg_dbhost'];
         $this->dbUsr   =  $GLOBALS['cfg_dbuser'];
         $this->dbPwd    =  $GLOBALS['cfg_dbpwd'];
         $this->dbName   =  $GLOBALS['cfg_dbname'];
         $this->dbPrefix =  $GLOBALS['cfg_dbprefix'];
-		$dbs="mysql:host={$this->dbHost};dbname={$this->dbName}";
-		try {
-			parent::__construct($dbs,$this->dbUsr,$this->dbPwd,array(PDO::ATTR_PERSISTENT => true));	
-		}catch (PDOException $e) {
-			print $e->getMessage();
-		}  
+        $dbs="mysql:host={$this->dbHost};dbname={$this->dbName}";
+        try {
+            parent::__construct($dbs,$this->dbUsr,$this->dbPwd,array(PDO::ATTR_PERSISTENT => true));	
+        }catch (PDOException $e) {
+            print $e->getMessage();
+        }  
     }
 
     function SunPdo()
@@ -47,19 +47,19 @@ class SunPdo extends PDO {
         if(!empty($sql))
         {
             $this->SetQuery($sql);
-        }	
-		
+        }
+
         //SQL语句安全检查
         if($this->safeCheck)
         {
             CheckSql($this->queryString);
         }
-		$t1=time();
-		$this->result[$id]=$this->prepare($this->queryString, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-		$this->result[$id]->execute();
-		
-		if($this->recordLog) {
-			$this->RecordLog(time() - $t1);
+        $t1=time();
+        $this->result[$id]=$this->prepare($this->queryString, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+        $this->result[$id]->execute();
+
+        if($this->recordLog) {
+            $this->RecordLog(time() - $t1);
         }
     }
 
@@ -72,13 +72,13 @@ class SunPdo extends PDO {
             else $this->SetQuery($sql);
         }
         $this->result['one']=$this->query($this->queryString);
-		return $this->result['one']->fetch(PDO::FETCH_ASSOC);
+        return $this->result['one']->fetch(PDO::FETCH_ASSOC);
     }
 
     //返回当前的一条记录并把游标移向下一记录
     function GetArray($id="me")
     {
-		return $this->result[$id]->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT);
+        return $this->result[$id]->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT);
     }
 
     //设置SQL语句，会自动把SQL语句里的#@__替换为$this->dbPrefix(在配置文件中为$cfg_dbprefix)
@@ -89,26 +89,40 @@ class SunPdo extends PDO {
         $this->queryString = $sql;
         return $this->queryString;
     }
-	
-	//获取数据库所有表
-	function GetDBTables($id='me')
-	{
-		$this->result[$id] = @$this->query("show tables");	
-	}
-	
+
+    //获取数据库所有表
+    function GetDBTables($id='me')
+    {
+    $this->result[$id] = @$this->query("show tables");	
+    }
+
     function GetTabFields($tname){	//不完整的表名请带上前缀#@__
-		$arr=array();
-		$this->Execute('fd',"SHOW COLUMNS FROM ".$tname);
-		while($row=$this->GetArray('fd'))
-		{
-			$arr[]=$row['Field'];
-		}
-		return $arr;
-	}
-	function GetTotalRow($id=me){
-		return count($this->result[$id]->fetchall());
-	}
-	
+        $arr=array();
+        $this->Execute('fd',"SHOW COLUMNS FROM ".$tname);
+        while($row=$this->GetArray('fd'))
+        {
+            $arr[]=$row['Field'];
+        }
+        return $arr;
+    }
+    function GetTotalRow($id=me){
+        return count($this->result[$id]->fetchall());
+    }
+
+    function GetTotal($tname){
+        $cquery = "SELECT COUNT(*) AS dd FROM `#@__$tname` ";
+        $row = $this->dsql->GetOne($cquery);
+        if(is_array($row))
+        {
+            $result = $row['dd'];
+        }
+        else
+        {
+            $result = 0;
+        }
+        return $result
+    }
+
 	function RecordLog($runtime=0)
 	{
 		$RecordLogFile = DATA.'/mysqli_record_log.inc';

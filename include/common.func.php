@@ -314,4 +314,10 @@ function putWXQrcode($pic,$tle,$str='qrcode'){
     return isset($jso->media_id)? $jso->media_id :"";   
 }
 
+function Message($title,$msg){
+$str="<html><title>Message</title><body style='background-color: #ddd;'><div style='width:500px;height:200px; margin:35px auto; border:#ccc 1px solid; background-color:#FFF' ><h3 style='color:#333; text-align:center'>{Title}</h3><p style='color:#e00;text-align:center;font:Georgia'>{Message}</p><p style='text-align:center;cursor: pointer;' onClick='javascript:history.go(-1);'>Click to prev page (<span id='time'>5</span>)seconds</p></div><script language='javascript'>var t=6;var time=document.getElementById('time');function fun(){t--;time.innerHTML = t;if(t<=0){history.go(-1);clearInterval(inter);}}var inter = setInterval('fun()',1000);</script></body></html>";
+$str=str_replace("{Title}",$title,$str);
+echo str_replace("{Message}",$msg,$str);
+}
+
 ?>

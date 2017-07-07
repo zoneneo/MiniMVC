@@ -216,10 +216,16 @@ class SunTemplate
     function __construct($templatedir='',$refDir='')
     {
         //$definedVars[] = 'var';
-        //缓存目录
         if($templatedir=='')
         {
-            $this->templateDir = SUNROOT.'/templets';
+            if(isset($GLOBALS['cfg_df_style']))
+            {
+                $this->templateDir = SUNTPL.'/'.$GLOBALS['cfg_df_style'];
+            }
+            else
+            {
+                $this->templateDir = SUNTPL;                
+            }
         }
         else
         {
@@ -229,16 +235,10 @@ class SunTemplate
         //模板include目录
         if($refDir=='')
         {
-            if(isset($GLOBALS['cfg_df_style']))
-            {
-                $this->refDir = $this->templateDir.'/'.$GLOBALS['cfg_df_style'].'/';
-            }
-            else
-            {
-                $this->refDir = $this->templateDir;
-            }
+            $this->refDir = $this->templateDir;
         }
-        $this->cacheDir = SUNROOT.$GLOBALS['cfg_tplcache_dir'];
+        //缓存目录
+        $this->cacheDir = $GLOBALS['cfg_tplcache_dir'].'/';
     }
 
     //构造函数,兼容PHP4
@@ -358,12 +358,9 @@ class SunTemplate
         }
         if($this->cacheDir!='')
         {
-            $this->cacheDir = $this->cacheDir.'/';
+            $this->cacheDir = $this->cacheDir;
         }
-        if(isset($GLOBALS['_DEBUG_CACHE']))
-        {
-            $this->cacheDir = $this->refDir;
-        }
+
         $this->cacheFile = $this->cacheDir.preg_replace("/\.(wml|html|htm|php)$/", "_".$this->GetEncodeStr($tmpfile).'.inc', $tmpfileOnlyName);
         $this->configFile = $this->cacheDir.preg_replace("/\.(wml|html|htm|php)$/", "_".$this->GetEncodeStr($tmpfile).'_config.inc', $tmpfileOnlyName);
         //不开启缓存、当缓存文件不存在、及模板为更新的文件的时候才载入模板并进行解析
@@ -498,6 +495,7 @@ class SunTemplate
      */
     function WriteCache($ctype='all')
     {
+
         if(!file_exists($this->cacheFile) || $this->isCache==FALSE
         || ( file_exists($this->templateFile) && (filemtime($this->templateFile) > filemtime($this->cacheFile)) ) )
         {

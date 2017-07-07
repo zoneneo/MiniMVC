@@ -1,0 +1,156 @@
+DROP TABLE IF EXISTS `#@__arctype`;
+CREATE TABLE `#@__arctype` (
+  `Kid` smallint(5) unsigned NOT NULL auto_increment,
+  `rid` smallint(5) default NULL,
+  `typename` varchar(60) default NULL,
+  `typedir` varchar(60) default NULL,
+  `tempindex` varchar(50) default NULL,
+  `templist` varchar(50) default NULL,
+  `temparticle` varchar(50) default NULL,
+  PRIMARY KEY  (`Kid`)
+) TYPE=MyISAM;
+
+DROP TABLE IF EXISTS `#@__archives`;
+CREATE TABLE `#@__archives` (
+  `Kid` int(8) NOT NULL auto_increment,
+  `rid` int(8) default '1',
+  `tme` char(10) default NULL,
+  `url` varchar(50) default NULL,
+  `template` varchar(20) default NULL,
+  `author` varchar(50) default NULL,
+  `flag` set('c','h','p','f','s') default NULL,
+  `click` char(8) default NULL,
+  `litpic` varchar(100) default NULL,
+  `title` varchar(80) default NULL,
+  `keywords` varchar(100) default NULL,
+  `description` varchar(200) default NULL,
+  `content` text,
+  PRIMARY KEY  (`Kid`)
+) TYPE=MyISAM;
+DROP TABLE IF EXISTS `#@__category`;
+CREATE TABLE `#@__category` (
+  `Kid` smallint(5) unsigned NOT NULL auto_increment,
+  `rid` smallint(5) default NULL,
+  `typename` varchar(60) default NULL,
+  `typedir` varchar(60) default NULL,
+  `tempindex` varchar(50) default NULL,
+  `templist` varchar(50) default NULL,
+  `temparticle` varchar(50) default NULL,
+  PRIMARY KEY  (`Kid`)
+) TYPE=MyISAM;
+
+DROP TABLE IF EXISTS `#@__items`;
+CREATE TABLE `#@__items` (
+  `Kid` int(8) NOT NULL auto_increment,
+  `rid` int(8) default '1',
+  `tme` char(10) default NULL,
+  `url` varchar(50) default NULL,
+  `template` varchar(20) default NULL,
+  `author` varchar(50) default NULL,
+  `flag` set('c','h','p','f','s') default NULL,
+  `click` char(8) default NULL,
+  `litpic` varchar(100) default NULL,
+  `title` varchar(80) default NULL,
+  `keywords` varchar(100) default NULL,
+  `description` varchar(200) default NULL,
+  `content` text,
+  PRIMARY KEY  (`Kid`)
+) TYPE=MyISAM;
+CREATE TABLE `sun_gamesvr` (
+  `Kid` int(11) NOT NULL auto_increment,
+  `game` varchar(20) NOT NULL,
+  `area` varchar(5) NOT NULL,
+  `serv` varchar(50) default NULL,
+  `typ` varchar(6) default NULL,
+  `gold` varchar(10) NOT NULL,
+  `price` float NOT NULL default '0',
+  `curr` char(3) NOT NULL default '',
+  `grow` varchar(10) NOT NULL,
+  `unit` varchar(10) NOT NULL,
+  PRIMARY KEY  (`Kid`)
+) ENGINE=MyISAM ;
+
+DROP TABLE IF EXISTS `#@__customer`;
+CREATE TABLE `#@__customer`(
+	Kid INT NOT NULL auto_increment,
+	typ VARCHAR(20),
+	tme INT(12),
+	user VARCHAR(127),
+	pass VARCHAR(25),
+	mail VARCHAR(127),
+	tel VARCHAR(30),
+	ip VARCHAR(16),
+	log VARCHAR(50),
+	credit VARCHAR(10),
+	verify VARCHAR(20),
+	fst VARCHAR(30),
+	lst VARCHAR(30),
+	player VARCHAR(127),
+	country VARCHAR(20),
+	address VARCHAR(200),
+	PRIMARY KEY(`Kid`)
+);
+
+DROP TABLE IF EXISTS `#@__payment`;
+CREATE TABLE `#@__payment`(
+	Kid INT NOT NULL auto_increment,
+	typ VARCHAR(20),
+	mid VARCHAR(10),
+	pid VARCHAR(12),
+	txn VARCHAR(17),	
+	pay VARCHAR(20),
+	ord VARCHAR(20),
+	auction VARCHAR(255),
+	sid VARCHAR(10),
+	game VARCHAR(10),
+	area VARCHAR(3),
+	realm VARCHAR(50),
+	role VARCHAR(30),
+	item VARCHAR(127),
+	qty VARCHAR(5),
+	price VARCHAR(10),
+	tax VARCHAR(6),
+	gross VARCHAR(50),
+	fee VARCHAR(50),
+	curr VARCHAR(3),
+	payd VARCHAR(50),
+	receiver VARCHAR(127),	
+	delivery VARCHAR(60),
+	PRIMARY KEY(`Kid`)
+);
+
+DROP TABLE IF EXISTS `#@__user`;
+CREATE TABLE `#@__user` (
+  `Kid` int(11) NOT NULL auto_increment,
+  `Level` varchar(2) default NULL,
+  `User` varchar(20) default NULL,
+  `Pwd` varchar(20) default NULL,
+  PRIMARY KEY  (`Kid`)
+) TYPE=MyISAM;
+
+DROP TABLE IF EXISTS `#@__access`;
+CREATE TABLE `#@__access`(
+	Kid INT NOT NULL auto_increment,
+	tme INT(12),
+	agent VARCHAR(200),
+	browser VARCHAR(30),
+	language VARCHAR(20),
+	system VARCHAR(20),
+	screen	VARCHAR(10),
+	referer VARCHAR(500),
+	page VARCHAR(200),
+	adrip VARCHAR(15),
+	make VARCHAR(10),
+	PRIMARY KEY (`Kid`)
+);
+
+DROP TABLE IF EXISTS `#@__spider`;
+CREATE TABLE `#@__spider`(
+	Kid INT NOT NULL auto_increment,
+	tme INT(12),
+	agent VARCHAR(20),
+	spider VARCHAR(20),
+	page VARCHAR(200),
+	adrip VARCHAR(15),
+	PRIMARY KEY (`Kid`)
+);

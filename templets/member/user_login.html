@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+<title>登录验证-长沙旭吉商贸</title>
+<meta name='keywords' content='长沙旭吉商贸，旭吉360'>
+<meta name='description' content='长沙旭吉商贸同城物流，为厂大商户提供价廉物美的商品，采取线上下订单，线下付款的交易模式。'>
+<link rel="stylesheet" href="images/base.css?v20141202.3" type="text/css"/>
+<link rel="stylesheet" href="images/style.css?v20141202.3" type="text/css"/>
+</head>
+<body>
+<div class='header'>
+<div class="SiteNav">
+<div class="NavWarp"><span class="fl"><em><a href="http://www.xuji360.com">首页</a></em> <em><a href="register.php" target="_top">注册会员</a></em></span><span class="fr">服务热线:0731-89835862</span></div>
+</div>
+<div class="hedwarp clear">
+<div class="logo fl"><a href="http://www.xuji360.com"><img src="images/logo.png" alt="旭吉360 logo" class="fl"></a></div>
+<div class="search fr"><form method="post" action="search.php"><input name="q" id="goodsSearch" type="text" placeholder="品名/首字母/分类号 搜索商品" class="searchWarp"><input type="submit" value="搜索" class="searchbtn"></form></div>
+</div>
+<div class="nav clear">
+<div class="warp"><a href="index.php">首页</a> <a href="goods.php">采购商品</a> <a href="cart.php">购物车</a> <a href="manage.php">我的旭吉</a> <a href="help.php">帮助</a></div>
+</div>
+</div>
+<div class="main-layout">
+<form method="post" action="verify.php" >
+<ul class="singwarp">
+<li><strong style="display:block;padding:10px 100px;font-size:18px">欢迎登录</strong></li>
+<li><input type="text"  name="userid" placeholder="账号" class="inbox"/> </li>
+<li><input type="password"  name="password" placeholder="密码" class="inbox"/></li>
+<li><input type="text" name="mark" placeholder="验证码" class="inbox" style="width:208px"/>
+<span class="vefcod"><img src="vfycode.php" onClick="this.src='vfycode.php?'+Math.random()" style="width:67px;height:38px;display:inline"></span></li>
+<li><input type="hidden" name="act" value="gin" /><button type="submit"  class="inbox">确 认 登 录</button></li>		
+</ul></form>
+</div>
+<div class='footer'><div class='foot'><a href="http://www.xuji360.com" class="cpyright">版权所有2013 旭吉商贸有限公司 Copyright &copy; 2013 Xu Ji Trade Co., LTD</a></div></div>
+</body>
+</html>

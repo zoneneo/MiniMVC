@@ -13,9 +13,8 @@ require_once(SUNINC."/template.class.php");
 class Control
 {
     var $tpl;
-	var $tpldir;
-    var $apptpl;
-	
+    var $tpldir;
+
     function __construct()
     {
         $this->Control();
@@ -24,21 +23,34 @@ class Control
     // 析构函数
     function Control()
     {
-		$this->SetTpldir();
         $this->tpl = isset($this->tpl)? $this->tpl : new SunTemplate();
     }
     
-	//初如化应用模板
-	function SetTpldir()
+    //初如化应用模板
+	function SetTpldir($tplfile,$path='')
 	{
-		$this->tpldir=SUNTPL.'/admin';
+        if($path=='')
+        {
+            if(isset($GLOBALS['cfg_df_style']))
+            {
+                $this->tpldir = SUNTPL.'/'.$GLOBALS['cfg_df_style'];
+            }
+            else
+            {
+                $this->tpldir = SUNTPL.'/'.'default';                
+            }
+        }else{
+             $this->tpldir = SUNTPL.'/'.$path;
+        }
+
+		$this->tpldir .='/'.$tplfile;
 	}
 	
     //设置模板,如果想要使用模板中指定的pagesize，必须在调用模板后才调用 SetSource($sql)
-    function SetTemplate($tplfile)
+    function SetTemplate($tplfile,$path='')
     {
-		$this->apptpl = $this->tpldir.'/'.$tplfile;
-        $this->tpl->LoadTemplate($this->apptpl);  
+		$this->SetTpldir($tplfile,$path);
+        $this->tpl->LoadTemplate($this->tpldir);  
     }
     
     //设置文档相关的各种变量
@@ -56,7 +68,7 @@ class Control
     function Model($name='')
     {
         $name = preg_replace("#[^\w]#", "", $name);
-        $modelfile = SUNMODEL.'/'.$name.'.php';
+        $modelfile = MODEL.'/'.$name.'.php';
         if (file_exists($modelfile))
         {
             require_once $modelfile;
@@ -72,7 +84,7 @@ class Control
     {
 		if(defined('APPNAME')) 
 		{
-			$classfile = 'MY_'.$name.'.class.php';
+			$classfile = 'app_'.$name.'.class.php';
 			if ( file_exists ( '../'.APPNAME.'/libraries/'.$classfile ) )
 			{
 				require '../'.APPNAME.'/libraries/'.$classfile;
