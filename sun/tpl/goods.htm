@@ -1,0 +1,36 @@
+<div class="artfom">
+<form name="formart" action="article.php" method="post" enctype="multipart/form-data">
+<input type="hidden" name="cmd" value="{cmd/}" />
+<input type="hidden" name="id" value="{id/}" />
+<input type="hidden" name="tme" value="{tme/}" />
+<ul>
+<li>
+  <span>图片：</span><input name="litpic" type="text" value="{litpic/}" style="width:288px" />
+  <span>上传：</span><input type='file' name='loadimg' value='' style="width:190px" >
+  <span>分类：</span> <input name="rid" type="text" value="{rid/}" style="width:100px" />
+  <span>属性：</span><select name="flag" style="width:100px"><option value="p">普通[p]</option><option value="c">推荐[c]</option><option value="s">促销[s]</option><option value="f">附送[f]</option></select>
+</li>
+<li>
+<span>品名：</span><input name="title" type="text" value="{title/}" style="width:288px" />
+<span>规格：</span><input name="spec" type="text" value="{spec/}" style="width:190px" />
+<span>价格：</span><input name="price" type="text" value="{price/}" style="width:100px" />
+<span>促销：</span> <input name="sale" type="text" value="{sale/}" style="width:100px" />
+</li>
+
+<li>
+<span>品牌：</span><input name="brand" type="text" value="{brand/}" style="width:288px" />
+<span>条码：</span><input name="bar" type="text" value="{bar/}" style="width:190px" />
+<span>点击：</span><input name="click" type="text" value="{click/}" style="width:100px" />
+</li>
+<li>
+<span>描述：</span><input name="descr" type="text" value="{descr/}" style="width:288px" />
+<span>键词:</span><input name="words" type="text" value="{words/}" style="width:190px" />
+<span>作者:</span><input name="author" type="text" style="width:100px" value="{author/}" />
+<span>时 间: </span><input name="tme" type="text" style="width:100px" value="{tme/}" />
+</li>
+<li><span>内容：</span></li>
+<li><textarea name="content" style="width:900px;height:300px;">{content/}</textarea></li>
+<li></li></ul>
+<p align="center"><input name="reset" type="reset" value="重置" /> <input type="submit" name="button" value="{button/}" /></p>
+</form>
+</div>

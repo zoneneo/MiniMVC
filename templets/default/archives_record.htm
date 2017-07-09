@@ -1,0 +1,42 @@
+<HTML><HEAD>
+<TITLE>企业网站管理系统后台</TITLE>
+</HEAD>
+<body>
+<ul style="margin:15px auto;text-align:left;">
+<form name="archives" action="index.php" method="post" enctype="multipart/form-data">
+<input type="hidden" name="ct" value="admin" />
+<input type="hidden" name="ac" value="update" />
+<input type="hidden" name="to" value="archives" />
+<input type="hidden" name="key" value="{sun:var.arr.id/}" />
+<li><label>品名：</label><input name="title" type="text" value="{sun:var.arr.title/}" style="width:288px" />
+<label>积分：</label><input id='e_score' type='text' name='score' value='{sun:var.arr.score/}' style="width:190px">
+<label>分类：</label> <input name="typeid" type="text" value="{sun:var.arr.typeid/}" style="width:100px" />
+<label>属性：</label><select name="flag" style="width:100px">
+<option value="p">普通[p]</option><option value="c">推荐[c]</option>
+<option value="s">促销[s]</option><option value="f">附送[f]</option></select>
+</li>
+<li>
+<label>键词：</label><input name="words" type="text" value="{sun:var.arr.words/}" style="width:288px" />
+<label>规格：</label><input name="spec" type="text" value="{sun:var.arr.spec/}" style="width:190px" />
+<label>市价：</label> <input name="market" type="text" value="{sun:var.arr.market/}" style="width:100px" />
+<label>价格：</label><input name="price" type="text" value="{sun:var.arr.price/}" style="width:100px" />
+</li>
+<li>
+<label>描述：</label><input name="descr" type="text" value="{sun:var.arr.descr/}" style="width:288px" />
+<label>小图：</label><input name="litpic" type="text" value="{sun:var.arr.litpic/}" style="width:190px" />
+<label>库存：</label><input name="stock" type="text" value="{sun:var.arr.stock/}" style="width:100px" />
+<label>成交：</label><input name="trade" type="text" value="{sun:var.arr.trade/}" style="width:100px" />
+</li>
+<li>
+<label>像册：</label><input name="album" type="text" value="{sun:var.arr.album/}" style="width:288px" />
+<label>小图：</label><input name="litpic" type="text" value="{sun:var.arr.litpic/}" style="width:190px" />
+<label>条码：</label><input name="code" type="text" style="width:100px" value="{sun:var.arr.code/}" />
+<label>时间: </label><input name="sendate" type="text" style="width:100px" value="{sun:var.arr.sendate/}" />
+</li>
+<li><input type="submit" name="button" value="确 认 提 交" /></li>
+<li><textarea name="gbody" style="width:1000px;height:500px;">{sun:var.arr.gbody/}</textarea></li>
+<li><input type="submit" name="button" value="确 认 提 交" /></li>
+</form>
+</ul>
+</body>
+</HTML>

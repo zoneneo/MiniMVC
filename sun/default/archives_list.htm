@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset={sun:global.cfg_soft_lang/}" />
+<title>{sun:field.title/}_{sun:global.cfg_webname/}</title>
+</head>
+<body class="articleview">
+<div class="listbox">
+<table id="goods">
+<tbody>
+<tr><th>编号</th><th>分类</th><th>图片</th><th>名称</th><th>原价</th>
+<th>价格</th><th>数量</th><th>类型</th><th>成交</th></tr>
+{tag:datalist   timeformat=""}
+<tr>
+<td>{tag:field.id/}</td>
+<td>{tag:field.typeid/}</td>
+<td>{tag:field.litpic/}</td>
+ <a href='{tag:field.arcurl/}'>{tag:field.title/}</a>
+<div class='descriptions'>&nbsp;&nbsp;&nbsp;&nbsp;{tag:field.description   function="CnSubstr(@me,150)"/}...</div><br />  
+<td>{tag:field.market/}</td>
+<td>{tag:field.id/}</td>
+<td>{tag:field.stock/}</td>
+<td>{tag:field.typ/}</td>
+<td>{tag:field.trade/}</td>
+{/tag:datalist}
+	
+</tbody></table>
+</div>
+</body>
+</html>

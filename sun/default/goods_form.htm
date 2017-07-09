@@ -1,0 +1,68 @@
+<HTML><HEAD>
+<TITLE>企业网站管理系统后台</TITLE>
+<link rel="stylesheet" href="images/CssAdmin.css">
+	<link rel="stylesheet" href="../themes/default/default.css" />
+	<link rel="stylesheet" href="../plugins/code/prettify.css" />
+	<script charset="utf-8" src="../kindeditor.js"></script>
+	<script charset="utf-8" src="../lang/en.js"></script>
+	<script charset="utf-8" src="../plugins/code/prettify.js"></script>
+	<script>
+	KindEditor.ready(function(K) {
+		var editor1 = K.create('textarea[name="gbody"]', {
+			cssPath : '../plugins/code/prettify.css',
+			uploadJson : 'upload_json.php',
+			fileManagerJson : 'file_manager_json.php',
+			allowFileManager : true,
+			afterCreate : function() {
+				var self = this;
+				K.ctrl(document, 13, function() {
+					self.sync();
+					K('form[name=example]')[0].submit();
+				});
+				K.ctrl(self.edit.doc, 13, function() {
+					self.sync();
+					K('form[name=example]')[0].submit();
+				});
+			}
+		});
+		prettyPrint();
+	});
+	</script>
+</HEAD>
+<body>
+
+<ul style="margin:15px auto;text-align:left;">
+<form name="formart" action="index.php?ct=goods&ac={sun:var.arr.cmd/}" method="post" enctype="multipart/form-data">
+<input type="hidden" name="key" value="{sun:var.arr.key/}" />
+
+<li><label>编号：</label><input type="text" name="id" value="{sun:var.arr.id/}" /><label>分类：</label> <input name="rid" type="text" value="{sun:var.arr.rid/}" style="width:100px" />
+<label>属性：</label><select name="flag" style="width:100px">
+<option value="p">普通[p]</option><option value="c">推荐[c]</option>
+<option value="s">促销[s]</option><option value="f">附送[f]</option></select>
+<label>积分 </label><input id='e_score' type='text' name='score' value='0'>
+</li>
+<li>
+<label>品名：</label><input name="title" type="text" value="{sun:var.arr.title/}" style="width:288px" />
+<label>规格：</label><input name="spec" type="text" value="{sun:var.arr.spec/}" style="width:190px" />
+<label>市价：</label> <input name="sale" type="text" value="{sun:var.arr.sale/}" style="width:100px" />
+<label>价格：</label><input name="price" type="text" value="{sun:var.arr.price/}" style="width:100px" />
+</li>
+<li>
+<label>品牌：</label><input name="brand" type="text" value="{sun:var.arr.brand/}" style="width:288px" />
+<label>条码：</label><input name="code" type="text" value="{sun:var.arr.code/}" style="width:190px" />
+<label>库存：</label><input name="stock" type="text" value="{sun:var.arr.stock/}" style="width:100px" />
+<label>成交：</label><input name="trade" type="text" value="{sun:var.arr.trade/}" style="width:100px" />
+</li>
+<li>
+<label>描述：</label><input name="descr" type="text" value="{sun:var.arr.descr/}" style="width:288px" />
+<label>键词:</label><input name="words" type="text" value="{sun:var.arr.words/}" style="width:190px" />
+<label>作者:</label><input name="author" type="text" style="width:100px" value="{sun:var.arr.author/}" />
+<label>时 间: </label><input name="tme" type="text" style="width:100px" value="{sun:var.arr.tme/}" />
+</li>
+<li><input type="submit" name="button" value="确 认 提 交" /></li>
+<li><textarea name="gbody" style="width:1000px;height:500px;">{sun:var.arr.gbody/}</textarea></li>
+<li><input type="submit" name="button" value="确 认 提 交" /></li>
+</form>
+</ul>
+</body>
+</HTML>
