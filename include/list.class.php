@@ -2,6 +2,7 @@
 
 require_once(SUNINC."/suntag.class.php");
 
+
 class ListView
 {
     var $dsql;
@@ -33,7 +34,7 @@ class ListView
         $this->dtp = new SunTagParse();
         $this->dtp->SetRefObj($this);
         $this->dtp->SetNameSpace("sun", "{", "}");
-        $this->dtp2 = new SunTagParse();			
+        $this->dtp2 = new SunTagParse();            
         $this->dtp2->SetNameSpace("field","[","]");
         $this->upPageType = $uppage;
         $this->TotalResult = is_numeric($this->TotalResult)? $this->TotalResult : "";
@@ -60,14 +61,14 @@ class ListView
         if(isset($GLOBALS['PageNo'])) $this->PageNo = $GLOBALS['PageNo'];
         else $this->PageNo = 1;
 
-		//$sonids = GetSonIds($this->TypeID,$this->Fields['channeltype']);
-		$sonids = GetSonIds($this->TypeID);	
-		if(!preg_match("/,/", $sonids)) {
-			$sonidsCon = " arc.typeid = '$sonids' ";
-		}
-		else {
-			$sonidsCon = " arc.typeid IN($sonids) ";
-		}
+        //$sonids = GetSonIds($this->TypeID,$this->Fields['channeltype']);
+        $sonids = GetSonIds($this->TypeID); 
+        if(!preg_match("/,/", $sonids)) {
+            $sonidsCon = " arc.typeid = '$sonids' ";
+        }
+        else {
+            $sonidsCon = " arc.typeid IN($sonids) ";
+        }
         if($this->TotalResult==-1)
         {
             $cquery = "SELECT COUNT(*) AS dd FROM `#@__archives` arc WHERE ".$sonidsCon;
@@ -84,14 +85,17 @@ class ListView
         //初始化列表模板，并统计页面总数
         //$tempfile = $GLOBALS['cfg_basedir'].$GLOBALS['cfg_templets_dir'];
         //$tempfile = str_replace("{tid}", $this->TypeID, $tempfile);
-		//$tempfile = str_replace("{cid}", 'article', $tempfile);
-		/*
+        //$tempfile = str_replace("{cid}", 'article', $tempfile);
+        /*
         if(!file_exists($tempfile))
-        {		
+        {       
             $tempfile = $GLOBALS['cfg_basedir'].$GLOBALS['cfg_templets_dir']."/list.htm";
         }*/
-		$tmpdir = $GLOBALS['cfg_basedir'].$GLOBALS['cfg_templets_dir'];
-		$tempfile = $tmpdir."/list.htm";
+        // $tmpdir = $GLOBALS['cfg_basedir'].$GLOBALS['cfg_templets_dir'];
+
+
+        $tempfile = SUNTPL."/default/archives_list.htm";
+        echo $tempfile;
         if(!file_exists($tempfile)||!is_file($tempfile))
         {
             echo "模板文件不存在，无法解析文档！";
@@ -123,20 +127,21 @@ class ListView
 
     function Display()
     {
-		$tmpdir = $GLOBALS['cfg_basedir'].$GLOBALS['cfg_templets_dir'];
-		//$tempfile = str_replace("{tid}",$this->TypeID,$this->Fields['tempindex']);
-		//$tempfile = str_replace("{cid}",$this->ChannelUnit->ChannelInfos['nid'],$tempfile);
-		//$tempfile = $tmpdir."/".$tempfile;
-		$tempfile = $tmpdir."/list.htm";
+        //$tmpdir = $GLOBALS['cfg_basedir'].$GLOBALS['cfg_templets_dir'];
+        //$tempfile = str_replace("{tid}",$this->TypeID,$this->Fields['tempindex']);
+        //$tempfile = str_replace("{cid}",$this->ChannelUnit->ChannelInfos['nid'],$tempfile);
+        //$tempfile = $tmpdir."/".$tempfile;
+        $tempfile = SUNTPL."/default/archives_list.htm";
         $this->CountRecord();
-        echo 'test--------------1';
-		$this->dtp->LoadTemplate($tempfile);
-		        echo 'test--------------2';
+        $this->dtp->LoadTemplate($tempfile);
+        // foreach ($this->dtp->CTags as $key => $value) {
+        //     echo $key;
+        //     var_dump($value);   
+        // }
         //$this->ParseTempletsFirst();
         $this->ParseDMFields($this->PageNo,0);
-                echo 'test--------------3';
         $this->dtp->Display();
-		        echo 'test--------------4';
+        
     }
 
     function ParseDMFields($PageNo,$ismake=1)
@@ -147,7 +152,7 @@ class ListView
             {
                 $limitstart = ($this->PageNo-1) * $this->PageSize;
                 $row = $this->PageSize;
-				$InnerText = trim($ctag->GetInnerText());
+                $InnerText = trim($ctag->GetInnerText());
                 $this->dtp->Assign($tagid,
                 $this->GetArcList(
                 $limitstart,
@@ -213,18 +218,17 @@ class ListView
 
         //排序方式
         $ordersql = '';
-		
-		$sonids = GetSonIds($this->TypeID);		
-		if(!preg_match("/,/", $sonids)) {
-			$sonidsCon = " arc.typeid = '$sonids' ";
-		}
-		else {
-			$sonidsCon = " arc.typeid IN($sonids) ";
-		}
-		$query = "SELECT *	FROM `#@__archives` arc WHERE $sonidsCon $ordersql LIMIT $limitstart,$row";
-
+        $sonids = GetSonIds($this->TypeID); 
+        if(!preg_match("/,/", $sonids)) {
+            $sonidsCon = " arc.typeid = '$sonids' ";
+        }
+        else {
+            $sonidsCon = " arc.typeid IN($sonids) ";
+        }
+        $query = "SELECT *  FROM `#@__archives` arc WHERE $sonidsCon $ordersql LIMIT $limitstart,$row";
         $this->dsql->SetQuery($query);
         $this->dsql->Execute('al');
+
         $artlist = '';
         $this->dtp2->LoadSource($innertext);
         $GLOBALS['autoindex'] = 0;
@@ -245,7 +249,7 @@ class ListView
                     }
                     if(!preg_match("/^http:\/\//i", $row['litpic']))
                     {
-                        $row['litpic'] = $GLOBALS['cfg_mainsite'].$GLOBALS['cfg_mediasurl'].'/'.$row['litpic'];
+                        $row['litpic'] = $GLOBALS['cfg_cmspath'].$GLOBALS['cfg_mediasurl'].'/'.$row['litpic'];
                     }
                     if(preg_match('/c/', $row['flag']))
                     {
@@ -257,14 +261,14 @@ class ListView
                     {
                         foreach($this->dtp2->CTags as $k=>$ctag)
                         {
-							if(isset($row[$ctag->GetName()]))
-							{
-								$this->dtp2->Assign($k,$row[$ctag->GetName()]);
-							}
-							else
-							{
-								$this->dtp2->Assign($k,'');
-							}
+                            if(isset($row[$ctag->GetName()]))
+                            {
+                                $this->dtp2->Assign($k,$row[$ctag->GetName()]);
+                            }
+                            else
+                            {
+                                $this->dtp2->Assign($k,'');
+                            }
                         }
                     }
                     $artlist .= $this->dtp2->GetResult();
@@ -278,8 +282,8 @@ class ListView
                 $artlist .= "    </div>\r\n";
             }
         }//Loop Line
-
-        $this->dsql->FreeResult('al');
+        echo $artlist;
+        //$this->dsql->FreeResult('al');
         return $artlist;
     }
 
@@ -370,6 +374,7 @@ class ListView
                 $listdd.="<li><a href='".$purl."PageNo=$j'>".$j."</a></li>\r\n";
             }
         }
+
         $plist = '';
         if(preg_match('/index/i', $listitem)) $plist .= $indexpage;
         if(preg_match('/pre/i', $listitem)) $plist .= $prepage;
@@ -398,4 +403,3 @@ class ListView
     }
 /**/
 }
-?>

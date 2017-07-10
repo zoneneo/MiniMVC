@@ -27,8 +27,8 @@ class Control
     }
     
     //初如化应用模板
-	function SetTpldir($tplfile,$path='')
-	{
+    function SetTpldir($tplfile,$path='')
+    {
         if($path=='')
         {
             if(isset($GLOBALS['cfg_df_style']))
@@ -37,14 +37,14 @@ class Control
             }
             else
             {
-                $this->tpldir = SUNTPL.'/'.'default';                
+                $this->tpldir = SUNTPL.'/'.'default';
             }
         }else{
              $this->tpldir = SUNTPL.'/'.$path;
         }
 
-		$this->tpldir .='/'.$tplfile;
-	}
+        $this->tpldir .='/'.$tplfile;
+    }
 	
     //设置模板,如果想要使用模板中指定的pagesize，必须在调用模板后才调用 SetSource($sql)
     function SetTemplate($tplfile,$path='')

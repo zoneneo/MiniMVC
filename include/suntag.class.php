@@ -229,18 +229,20 @@ class SunTagParse
      */
     function LoadCache($filename)
     {
-        global $cfg_tplcache,$cfg_tplcache_dir;
+        global $cfg_tplcache_dir;
         if(!$this->IsCache)
         {
             return FALSE;
         }
-        $cdir = dirname($filename);
-        $cachedir = SUNROOT.$cfg_tplcache_dir;
-        $ckfile = str_replace($cdir,'',$filename).substr(md5($filename),0,16).'.inc';
-        $ckfullfile = $cachedir.'/'.$ckfile;
-        $ckfullfile_t = $cachedir.'/'.$ckfile.'.txt';
+        //$fname = dirname($filename);
+        $fname = basename($filename);
+        $ckfile = str_replace('.htm','_',$fname).md5($filename).'.inc';
+        $ckfullfile = CACHE.'/'.$ckfile;
+        $ckfullfile_t = CACHE.'/'.$ckfile.'.txt';
         $this->CacheFile = $ckfullfile;
         $this->TempMkTime = filemtime($filename);
+        echo '<br>cache file:';
+        echo $this->CacheFile;        
         if(!file_exists($ckfullfile)||!file_exists($ckfullfile_t))
         {
             return FALSE;
@@ -304,7 +306,7 @@ class SunTagParse
      */
     function SaveCache()
     {
-		echo 'test____cachefile'.$this->CacheFile;
+		echo 'test____cachefile: '.$this->CacheFile;
         $fp = fopen($this->CacheFile.'.txt',"w");
         fwrite($fp,$this->TempMkTime."\n");
         fclose($fp);
@@ -413,7 +415,7 @@ class SunTagParse
         $this->ParseTemplet();
         */
         //优化模板字符串存取读取方式
-        $this->taghashfile = $filename = SUNDATA.'/tplcache/'.md5($str).'.inc';
+        $this->taghashfile = $filename = DATA.'/tplcache/'.md5($str).'.inc';
         if( !is_file($filename) )
         {
             file_put_contents($filename, $str);

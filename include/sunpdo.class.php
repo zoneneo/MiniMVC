@@ -20,6 +20,7 @@ class SunPdo extends PDO {
     var $result;
     var $queryString;
     var $safeCheck;
+    var $recordLog=false;
 
     //用外部定义的变量初始类，并连接数据库 //PDO::__construct ( string $dsn [, string $username [, string $password [, array $driver_options ]]] )
     function __construct() 
@@ -120,7 +121,7 @@ class SunPdo extends PDO {
         {
             $result = 0;
         }
-        return $result
+        return $result;
     }
 
 	function RecordLog($runtime=0)

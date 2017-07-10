@@ -10,12 +10,25 @@ if(!defined('SUNINC')) exit('suncms');
 /**
  *  载入小助手,系统默认载入小助手
  *  在/data/helper.inc.php中进行默认小助手初始化的设置
+ *  使用示例:
+ *      在开发中,首先需要创建一个小助手函数,目录在\include\helpers中
+ *  例如,我们创建一个示例为test.helper.php,文件基本内容如下:
+ *  <code>
+ *  if ( ! function_exists('Hellosun'))
+ *  {
+ *      function Hellosun()
+ *      {
+ *          echo "Hello! sun...";
+ *      }
+ *  }
+ *  </code>
+ *  则我们在开发中使用这个小助手的时候直接使用函数helper('test');初始化它
+ *  然后在文件中就可以直接使用:Hellosun();来进行调用.
+ *
  * @access    public
  * @param     mix   $helpers  小助手名称,可以是数组,可以是单个字符串
  * @return    void
  */
-
-/*
 $_helpers = array();
 function helper($helpers)
 {
@@ -47,19 +60,13 @@ function helper($helpers)
     }
 }
 
-function helpers($helpers)
-{
-    helper($helpers);
-}
-*/	
-
-
 function sun_htmlspecialchars($str) {
-    global $cfg_soft_lang;
+    global $cfg_lang;
     if (version_compare(PHP_VERSION, '5.4.0', '<')) return htmlspecialchars($str);
-    if ($cfg_soft_lang=='gb2312') return htmlspecialchars($str,ENT_COMPAT,'ISO-8859-1');
+    if ($cfg_lang=='gb2312') return htmlspecialchars($str,ENT_COMPAT,'ISO-8859-1');
     else return htmlspecialchars($str);
 }
+
 
 /**
  *  控制器调用函数
@@ -117,6 +124,18 @@ function RunApp($ct, $ac = '',$directory = '')
             die ();
         }
     }
+}
+
+/**
+ *  载入小助手,这里用户可能载入用helps载入多个小助手
+ *
+ * @access    public
+ * @param     string
+ * @return    string
+ */
+function helpers($helpers)
+{
+    helper($helpers);
 }
 
 /**
