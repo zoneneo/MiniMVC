@@ -306,7 +306,6 @@ class SunTagParse
      */
     function SaveCache()
     {
-		echo 'test____cachefile: '.$this->CacheFile;
         $fp = fopen($this->CacheFile.'.txt',"w");
         fwrite($fp,$this->TempMkTime."\n");
         fclose($fp);
