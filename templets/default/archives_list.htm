@@ -8,23 +8,16 @@
 <div class="listbox">
 <table id="goods">
 <tbody>
-<tr><th>编号</th><th>分类</th><th>图片</th><th>名称</th><th>原价</th>
-<th>价格</th><th>数量</th><th>类型</th><th>成交</th></tr>
-{sun:list   timeformat=""}
+<tr><th>编号</th><th>分类</th><th>图片</th><th>名称</th></tr>
+{sun:list pagesize='10'}
 <tr>
-<td>[tag:field.id/]</td>
-<td>[field:typeid/]</td>
-<td>[field:litpic/]</td>
- <a href='[field:arcurl/]'>[field:title/]</a>
-<div class='descriptions'> [field:description   function="CnSubstr(@me,150)"/]...</div><br />  
-<td>[field:market/]</td>
 <td>[field:id/]</td>
-<td>[field:stock/]</td>
-<td>[field:typ/]</td>
-<td>[field:trade/]</td>
+<td>[field:typeid/]</td>
+<td><img src="[field:litpic/]"></td>
+<td><a href='[field:arcurl/]'>[field:title/]</a></td>
 </tr>
 {/sun:list}
-{sun:pagelist listitem="info,index,end,pre,next,pageno,option" listsize="5"/}
+{sun:pagelist listitem="info,index,end,pre,next,pageno,option" listsize="5" /}
 </tbody></table>
 </div>
 </body>

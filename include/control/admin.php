@@ -16,57 +16,11 @@
 		}
 		public function ac_table()
 		{
-			//global $_REQUEST,$adm_scope,$cn_title;
-			global $_REQUEST,$adm_scope;
-			require_once(SUNINC."/pager.class.php");
-			$sel=$_SERVER["PHP_SELF"];			
+			global $_REQUEST;
 			extract($_REQUEST);
-			$pag = intval($pag);
-			$pag = $pag<1 ? 1 : $pag;
-			$_SESSION["TYPE_ID"]=$tid;	
-
-			$mod=$this->Model('store');
-			$fds = $mod->GetTabFields("#@__".$to);
-			$flt=array('gbody','descr','words');
-			$fds =array_diff($fds,$flt);
-			$pgz =30;		
-			$query ="SELECT * FROM #@__{$to} ";
-			$mod->Execute('me',$query);
-			$rdn =$mod->GetTotalRow("me");
-
-			$pset=array("PageSz" =>$pgz,"CurtPage" =>$pag,"Amount"=>$rdn);
-			$pager=new Pager($pset);
-			list($s,$c,$e,$n)=$pager->PageBar(15);
-			$bar="<p id='pagbar'><a href='{$sel}?ac={$ac}&to={$to}&pag=1'>1</a> &lt;&lt; ";
-			for($i=$s;$i<$e+1;$i++){
-				$css= ($i==$c) ? "class='active'" : '';
-				$bar .="<a href='{$sel}?ac={$ac}&to={$to}&pag=$i' $css>$i</a>";
-			}
-			$bar .=" &gt;&gt; <a href='{$sel}?ac={$ac}&to={$to}&pag=$n'>$n</a></p>";
-			$cont ="<html><head><link rel='stylesheet' href='images/admin.css' type='text/css'/></head><body>
-			<table class='admtalbe'><tr><th colspan='3' width='60'> <a href='$sel?ct=admin&ac=forms&to={$to}' title='add'>INSERT</a></th>\r\n";
-			foreach($fds as $fd){
-				$fn=isset($cn_title[$fd])? $cn_title[$fd] : $fd;	
-				$cont .= "<th>$fn</th>";
-			}
-			$cont .="</tr>\r\n";
-			
-			$sar=($pag-1)*$pgz;
-			$mod->Execute("dd","SELECT * FROM #@__{$to} LIMIT $sar,$pgz");
-			while($row = $mod->GetArray('dd'))
-			{
-				$cont .="<tr><td><a href='$sel?ct=admin&ac=record&do=record&to={$to}&key={$row['id']}'>Edit</a></td>";
-				$cont .="<td><a href='$sel?ct=admin&ac=record&do=copy&to={$to}&key={$row['id']}'>Copy</a></td>";
-				$cont .="<td><a href='$sel?ct=admin&ac=remove&to={$to}&key={$row['id']}'>Delete</a></td>";	
-				foreach($fds as $fd)
-				{
-					$cont .= empty($row[$fd])?"<td>&nbsp;</td>" : "<td>".$row[$fd]."</td>";
-				}
-				$cont .="</tr>";
-			}
-			$cont.="</table></body></html>";
-			$cont.=$bar;
-			echo $cont;	
+			require_once(SUNINC."/dblist.class.php");
+			$lv = new ListView($to);
+			$lv->Display();	
 		}
 		public function ac_record()
 		{
@@ -148,7 +102,7 @@
 		}
 		public function ac_index()
 		{
-			$this->SetTemplate("admin_index.htm");			
+			$this->SetTemplate("admin_index.htm","admin");			
 			$this->Display();
 			exit(0);
 		}
@@ -159,35 +113,31 @@
 			header("Location: ?ct=admin&ac=login");
 			exit(0);
 		}		
-		public function assemble($tname,$ac){
-			global $_REQUEST,$adm_scope;
-			$box=$adm_scope;
-			$sql = compact(array('listing','record','remove','append','update'));
-			if(array_key_exists($tname,$box)){
-				$allow=array();
-				$scope=$box[$tname];
-				if($scope==""||$scope=='*'){
-					$field = $this->Model('store')->GetFields("#@__".$tname);
-				}else{
-					$field = explode(',',$scope);
-				}
-				$this->Options($field,$allow);
-				$flds=implode(",",array_keys($allow));
-				$vars=implode("','",$allow);
-				$key=preg_replace('/[^\d]/', '', $_REQUEST['key']);		
-				
-				$vals="";
-				foreach($allow as $k=>$v){
-					$vals .="$k =@{$k},";
-				}
-				$vals= preg_replace('/\,$/', '', $vals);
-				$sql['listing'] ="SELECT {$scope} FROM #@__{$tname}";	
-				$sql['record'] ="SELECT {$scope} FROM #@__{$tname} WHERE id ='{$key}'";
-				$sql['remove'] ="DELETE FROM #@__{$tname} WHERE id = :key";
-				$sql['update'] = "UPDATE #@__{$tname} SET {$vals} WHERE id =:key ";
-				$sql['append'] = "INSERT INTO `#@__{$tname}` ({$flds}) VALUES('{$vars}')";
+		public function assemble($tname,$ac)
+		{
+			global $_REQUEST;
+			$sql = compact(array('listing','record','remove','insert','update'));
+			$vals="";
+			$allow=array();
+			$field = $this->Model('store')->GetFields("#@__".$tname);
+			$this->Options($field,$allow);
+			$flds=implode(",",array_keys($allow));
+			$vars=implode("','",$allow);
+			$key=preg_replace('/[^\d]/', '', $_REQUEST['key']);
+			foreach($allow as $k=>$v){
+				$vals .="$k =@{$k},";
 			}
-			return $sql[$ac];
+			$vals= preg_replace('/\,$/', '', $vals);
+			$sql['listing']= "SELECT {$scope} FROM #@__{$tname}";	
+			$sql['record'] = "SELECT {$scope} FROM #@__{$tname} WHERE id ='{$key}'";
+			$sql['remove'] = "DELETE FROM #@__{$tname} WHERE id = :key";
+			$sql['update'] = "UPDATE #@__{$tname} SET {$vals} WHERE id =:key ";
+			$sql['insert'] = "INSERT INTO #@__{$tname} ({$flds}) VALUES('{$vars}')";
+			if(array_key_exists($ac,$sql)){
+				return $sql[$ac];				
+			}else{
+				return '';
+			}
 		}		
 		public function Options($scope,&$allow)
 		{
@@ -218,11 +168,10 @@
 		public function ac_goods()
 		{
 			global $_REQUEST;
-			$ac=$_REQUEST['ac'];
-			$tid = $_REQUEST['tid'];
+			extract($_REQUEST);
 			require_once(SUNINC."/list.class.php");
-			$tid = (isset($tid) && is_numeric($tid) ? $tid : 0);
-			//if($tid==0) die(" Request Error! ");
+			$tempfile = SUNTPL."/default/archives_list.htm";
+			$tid = is_numeric($tid) ? $tid : 0;
 			$lv = new ListView($tid);
 			$lv->Display();	
 		}

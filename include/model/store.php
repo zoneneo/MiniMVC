@@ -89,6 +89,20 @@ class Store extends PDO {
 	function GetTotalRow($id=me){
 		return count($this->result[$id]->fetchall());
 	}
+
+    function GetTotal($tname){
+        $cquery = "SELECT COUNT(*) AS dd FROM `#@__$tname` ";
+        $row = $this->GetOne($cquery);
+        if(is_array($row))
+        {
+            $result = $row['dd'];
+        }
+        else
+        {
+            $result = 0;
+        }
+        return $result;
+    }    
 }
 
 ?>

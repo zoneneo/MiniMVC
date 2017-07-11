@@ -32,7 +32,7 @@ $cfg_lang = 'utf8';
 $cfg_site = 'http://wx.xx.com';
 $cfg_api ='http://api.xx.com';
 $cfg_mediasurl='/static/upload';
-$cfg_cmspath = '/gene';
+$cfg_cmspath = '/';
 $app_url = '/index.html?page=';
 
 $cfg_cookie = 'G_N_T_K';

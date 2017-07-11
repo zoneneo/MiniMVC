@@ -54,6 +54,7 @@ class ListView
 
     function CountRecord()
     {
+        global $cfg_list_son,$cfg_need_typeid2,$cfg_cross_sectypeid;
         //统计数据库记录
         $this->TotalResult = -1;
         if(isset($GLOBALS['TotalResult'])) $this->TotalResult = $GLOBALS['TotalResult'];
@@ -81,15 +82,27 @@ class ListView
                 $this->TotalResult = 0;
             }
         }
+        //初始化列表模板，并统计页面总数
+        //$tempfile = $GLOBALS['cfg_basedir'].$GLOBALS['cfg_templets_dir'];
+        //$tempfile = str_replace("{tid}", $this->TypeID, $tempfile);
+        //$tempfile = str_replace("{cid}", 'article', $tempfile);
+        /*
+        if(!file_exists($tempfile))
+        {       
+            $tempfile = $GLOBALS['cfg_basedir'].$GLOBALS['cfg_templets_dir']."/list.htm";
+        }*/
+        // $tmpdir = $GLOBALS['cfg_basedir'].$GLOBALS['cfg_templets_dir'];
+
 
         $tempfile = SUNTPL."/default/archives_list.htm";
+        echo $tempfile;
         if(!file_exists($tempfile)||!is_file($tempfile))
         {
             echo "模板文件不存在，无法解析文档！";
             exit();
         }
         $this->dtp->LoadTemplate($tempfile);
-        $ctag = $this->dtp->GetTag("pagelist");
+        $ctag = $this->dtp->GetTag("page");
         if(!is_object($ctag))
         {
             $ctag = $this->dtp->GetTag("list");
@@ -109,17 +122,27 @@ class ListView
                 $this->PageSize = 20;
             }
         }
-        $this->TotalPage = ceil($this->TotalResult/$this->PageSize);
+        $this->TotalPage = ceil($this->TotalResult/$this->PageSize); 
     }
 
     function Display()
     {
+        $tmpdir = $GLOBALS['cfg_basedir'].$GLOBALS['cfg_templets_dir'];
+        $tempfile = str_replace("{tid}",$this->TypeID,$this->Fields['tempindex']);
+        $tempfile = str_replace("{cid}",$this->ChannelUnit->ChannelInfos['nid'],$tempfile);
+        $tempfile = $tmpdir."/".$tempfile;
+        print_r($this->Fields);
+        echo 'tempfile = '.$tempfile;
+        // $tempfile = SUNTPL."/default/archives_list.htm";
         $this->CountRecord();
-        // $tempfile = SUNTPL."/default/archives_list.htm";       
-        // $this->dtp->LoadTemplate($tempfile);
-        $this->ParseDMFields($this->PageNo,0);     
+        $this->dtp->LoadTemplate($tempfile);
+        // foreach ($this->dtp->CTags as $key => $value) {
+        //     echo $key;
+        //     var_dump($value);   
+        // }
+        //$this->ParseTempletsFirst();
+        $this->ParseDMFields($this->PageNo,0);
         $this->dtp->Display();
-
         
     }
 
@@ -261,6 +284,7 @@ class ListView
                 $artlist .= "    </div>\r\n";
             }
         }//Loop Line
+        echo $artlist;
         //$this->dsql->FreeResult('al');
         return $artlist;
     }

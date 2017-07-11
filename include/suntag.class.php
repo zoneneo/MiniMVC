@@ -240,9 +240,7 @@ class SunTagParse
         $ckfullfile = CACHE.'/'.$ckfile;
         $ckfullfile_t = CACHE.'/'.$ckfile.'.txt';
         $this->CacheFile = $ckfullfile;
-        $this->TempMkTime = filemtime($filename);
-        echo '<br>cache file:';
-        echo $this->CacheFile;        
+        $this->TempMkTime = filemtime($filename);     
         if(!file_exists($ckfullfile)||!file_exists($ckfullfile_t))
         {
             return FALSE;
@@ -1119,9 +1117,10 @@ class SunAttributeParse
         $this->sourceString = trim(preg_replace("/[ \r\n\t]{1,}/"," ",$str));
         
         //为了在function内能使用数组，这里允许对[ ]进行转义使用
+        /*
         $this->sourceString = str_replace('\]',']',$this->sourceString);
         $this->sourceString = str_replace('[','[',$this->sourceString);
-        /*
+
         $this->sourceString = str_replace('\>','>',$this->sourceString);
         $this->sourceString = str_replace('<','>',$this->sourceString);
         $this->sourceString = str_replace('{','{',$this->sourceString);
