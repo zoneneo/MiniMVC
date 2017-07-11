@@ -1,6 +1,17 @@
 <?php
 	class admin extends Control
 	{
+		public function ac_goods()
+		{
+			global $_REQUEST;
+			extract($_REQUEST);
+			require_once(SUNINC."/list.class.php");
+			$tempfile = SUNTPL."/default/archives_list.htm";
+			$tid = is_numeric($tid) ? $tid : 0;
+			$lv = new ListView($tid);
+			$lv->Display();	
+		}
+
 		public function ac_listing()
 		{
 			$stmt=$this->Model('store')->query("show tables");
@@ -19,6 +30,7 @@
 			global $_REQUEST;
 			extract($_REQUEST);
 			require_once(SUNINC."/dblist.class.php");
+			$GLOBALS['cfg_to_table']=$to;
 			$lv = new ListView($to);
 			$lv->Display();	
 		}
@@ -27,8 +39,8 @@
 			global $_REQUEST;
 			extract($_REQUEST);
 			$sql=$this->assemble($to,$ac);
-			$arr=$this->Model('store')->GetOne($sql);
-			//$this->SetTemplate($to."_".$ac.".htm");
+			$mod=$this->Model('store');
+			$arr=$mod->GetOne($sql);
 			$this->SetTemplate($to."_form.htm");
 			$this->SetVar('arr',$arr);
 			$this->Display();
@@ -119,17 +131,19 @@
 			$sql = compact(array('listing','record','remove','insert','update'));
 			$vals="";
 			$allow=array();
-			$field = $this->Model('store')->GetFields("#@__".$tname);
-			$this->Options($field,$allow);
-			$flds=implode(",",array_keys($allow));
-			$vars=implode("','",$allow);
 			$key=preg_replace('/[^\d]/', '', $_REQUEST['key']);
-			foreach($allow as $k=>$v){
-				$vals .="$k =@{$k},";
+			if($ac=='update'||$ac=='insert'){
+				$field = $this->Model('store')->GetFields("#@__".$tname);
+				$this->Options($field,$allow);
+				$flds=implode(",",array_keys($allow));
+				$vars=implode("','",$allow);
+				foreach($allow as $k=>$v){
+					$vals .="$k =@{$k},";
+				}
+				$vals= preg_replace('/\,$/', '', $vals);
 			}
-			$vals= preg_replace('/\,$/', '', $vals);
-			$sql['listing']= "SELECT {$scope} FROM #@__{$tname}";	
-			$sql['record'] = "SELECT {$scope} FROM #@__{$tname} WHERE id ='{$key}'";
+			$sql['listing']= "SELECT * FROM #@__{$tname}";	
+			$sql['record'] = "SELECT * FROM #@__{$tname} WHERE id ='{$key}'";
 			$sql['remove'] = "DELETE FROM #@__{$tname} WHERE id = :key";
 			$sql['update'] = "UPDATE #@__{$tname} SET {$vals} WHERE id =:key ";
 			$sql['insert'] = "INSERT INTO #@__{$tname} ({$flds}) VALUES('{$vars}')";
@@ -149,31 +163,22 @@
 				}
 			}
 		}
-		function BuildForm($tplname,$fields,$to)
+		function BuildForm()
 		{
-			$fp = fopen($tplname,'w');
-			flock($fp,3);
-			fwrite($fp,"<html><head><title></title></head><body><ul>\r\n");
-			fwrite($fp,"<form method='post' action='index.php?' name='$to'>\r\n");
-			fwrite($fp,"<input type='hidden' name='to' value='$to' />\r\n");
-			fwrite($fp,"<input type='hidden' name='ct' value='admin' />\r\n");
-			fwrite($fp,"<input type='hidden' name='ac' value='append' /><ul>\r\n");
+			extract($_REQUEST);
+			$elf=$_SERVER['PHP_SELF'];
+			$htm="<html><head><title></title></head><body><ul>\r\n";
+			$htm.="<form method='post' action='index.php?' name='$to'>\r\n";
+			$htm.="<input type='hidden' name='to' value='$to' />\r\n";
+			$htm.="<input type='hidden' name='ct' value='admin' />\r\n";
+			$htm.="<input type='hidden' name='ac' value='append' /><ul>\r\n";
+			$fields=$this->Model('store')->GetTabFields('#@__'.$to,'me');			
 			foreach($fields as $k=>$v)
 			{
-				fwrite($fp,"<li><label>{$k} {$v}</label><input type='text' name='{$v}' value=''></li>\r\n");
+				$htm.="<li><label>{$k} {$v}</label><input type='text' name='{$v}' value=''></li>\r\n";
 			}
-			fwrite($fp,"<input type='submit' name='button' value='确 认'></form></ul></body></html>");
-			fclose($fp);
-		}
-		public function ac_goods()
-		{
-			global $_REQUEST;
-			extract($_REQUEST);
-			require_once(SUNINC."/list.class.php");
-			$tempfile = SUNTPL."/default/archives_list.htm";
-			$tid = is_numeric($tid) ? $tid : 0;
-			$lv = new ListView($tid);
-			$lv->Display();	
+			$htm.="<input type='submit' name='button' value='确 认'></form></ul></body></html>";
+			return $htm;
 		}
 	}
 ?>

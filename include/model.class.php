@@ -15,8 +15,7 @@ class Model
     // 析构函数
     function Model()
     {
-        global $dsql;
-        $this->dsql = $this->db = isset($dsql)? $dsql : new SunSql();
+
     }
 }
 ?>
