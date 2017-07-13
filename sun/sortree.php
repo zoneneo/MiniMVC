@@ -66,7 +66,7 @@
 		{
 			$cont .="<h3><b>$k . <a href='index.php?ct=admin&ac=goods&tid=$k'> ".$res[$k]." </a></b>";
 			$cont .="<span><a href='javascript:JSMgSort(1,$k);'>子类</a> <a href='javascript:JSMgSort(2,$k);'>类名</a>";
-			$cont .=" <a href='javascript:JSMgSort(3,$k);'>移动</a> <a href='javascript:JSMgSort(4,$k);'> 删除</a></span></h3>";
+			$cont .=" <a href='javascript:JSMgSort(3,$k);'>移动</a> <a href='javascript:JSMgSort(4,$k);'> 删除</a> <a href='index.php?ct=admin&ac=recode&to=arctype&key=$k'>修改</a> </span></h3>";
 		}else
 		{
 			if($k=='}')
@@ -75,9 +75,10 @@
 			}else
 			{
 				$k=str_replace('{','',$k);
-				$cont.="<h3><b onclick='ShowNode($k)'>$k [<span id='e$k'>-</span>]<a href='index.php?ct=admin&ac=goods&tid=$k' > ".$res[$k]."</a></b>";
-				$cont.=" <span><a href='javascript:JSMgSort(1,$k);'>子类</a> <a href='javascript:JSMgSort(2,$k);'>类名</a>";
-				$cont .=" <a href='javascript:JSMgSort(3,$k);'>移动</a> <a href='javascript:JSMgSort(4,$k);'> 删除</a></span></h3><div id='d$k'>";
+				$cont .="<h3><b onclick='ShowNode($k)'>$k [<span id='e$k'>-</span>]<a href='index.php?ct=admin&ac=goods&tid=$k' > ".$res[$k]."</a></b>";
+				$cont .=" <span><a href='javascript:JSMgSort(1,$k);'>子类</a> <a href='javascript:JSMgSort(2,$k);'>类名</a>";
+				$cont .=" <a href='javascript:JSMgSort(3,$k);'>移动</a> <a href='javascript:JSMgSort(4,$k);'> 删除</a>";
+				$cont .=" <a href='index.php?ct=admin&ac=recode&to=arctype&key=$k'>修改</a> </span></h3><div id='d$k'>";
 			}
 		}
 	}

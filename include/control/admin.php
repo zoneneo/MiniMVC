@@ -17,9 +17,21 @@
 		public function ac_table()
 		{
 			global $_REQUEST;
+			extract($_REQUEST);	
+			$GLOBALS['DB_Table_Name']=$to;
+			$GLOBALS['ADM_PageNo']=is_numeric($PageNo)? $PageNo : 1;
+			$GLOBALS['ADM_PageSize']=is_numeric($PageSize)? $PageSize : 10;
+			$this->SetTemplate($to."_list.htm");
+			$this->Display();
+		}
+		public function ac_goods()
+		{
+			global $_REQUEST;
 			extract($_REQUEST);
-			require_once(SUNINC."/dblist.class.php");
-			$lv = new ListView($to);
+			require_once(SUNINC."/list.class.php");
+			$tempfile = SUNTPL."/default/archives_list.htm";
+			$tid = is_numeric($tid) ? $tid : 0;
+			$lv = new ListView($tid);
 			$lv->Display();	
 		}
 		public function ac_record()
@@ -66,8 +78,21 @@
 			extract($_REQUEST);
 			$tmpfile=$this->tpldir.'/'.$to.'_form.htm';
 			if(!file_exists($tmpfile))
-			{		
+			{
+				$loop="<li><label>[$v}</label><input type='text' name='[$v]' value='{$v}'></li>\r\n";
+				$htm ="<html><head><title></title></head><body>\r\n";
+				$htm .="<form method='post' action='index.php?' name='$to'>\r\n";
+				$htm .="<input type='hidden' name='to' value='$to' />\r\n";
+				$htm .="<input type='hidden' name='ct' value='admin' />\r\n";
+				$htm .="<input type='hidden' name='ac' value='append' /><ul>\r\n";
+				$htm .="{<li><label></label><input type='hidden' name='' value='' /></li>\}";
+				$htm .="<input type='submit' name='button' value='确 认'></ul></form></body></html>";
+
 				$fields=$this->Model('store')->GetTabFields('#@__'.$to,'me');
+				foreach ($fields as $k => $v) {
+
+
+				}
 				$this->BuildForm($tmpfile,$fields,$to);
 
 			}
@@ -151,29 +176,47 @@
 		}
 		function BuildForm($tplname,$fields,$to)
 		{
-			$fp = fopen($tplname,'w');
-			flock($fp,3);
-			fwrite($fp,"<html><head><title></title></head><body><ul>\r\n");
-			fwrite($fp,"<form method='post' action='index.php?' name='$to'>\r\n");
-			fwrite($fp,"<input type='hidden' name='to' value='$to' />\r\n");
-			fwrite($fp,"<input type='hidden' name='ct' value='admin' />\r\n");
-			fwrite($fp,"<input type='hidden' name='ac' value='append' /><ul>\r\n");
-			foreach($fields as $k=>$v)
-			{
-				fwrite($fp,"<li><label>{$k} {$v}</label><input type='text' name='{$v}' value=''></li>\r\n");
-			}
-			fwrite($fp,"<input type='submit' name='button' value='确 认'></form></ul></body></html>");
-			fclose($fp);
+			$loop="<li><label>[$v}</label><input type='text' name='[$v]' value='{$v}'></li>\r\n";
+			$htm ="<html><head><title></title></head><body>\r\n";
+			$htm .="<form method='post' action='index.php?' name='$to'>\r\n";
+			$htm .="<input type='hidden' name='to' value='$to' />\r\n";
+			$htm .="<input type='hidden' name='ct' value='admin' />\r\n";
+			$htm .="<input type='hidden' name='ac' value='append' /><ul>\r\n";
+			$htm .="{$loop}";
+			$htm .="<input type='submit' name='button' value='确 认'></ul></form></body></html>";
+			//$fp = fopen($tplname,'w');			
+			// fwrite($fp,$htm);
+			// fclose($fp);
 		}
-		public function ac_goods()
+		function GetArcList($atts,$refObj,$fields)
 		{
-			global $_REQUEST;
-			extract($_REQUEST);
-			require_once(SUNINC."/list.class.php");
-			$tempfile = SUNTPL."/default/archives_list.htm";
-			$tid = is_numeric($tid) ? $tid : 0;
-			$lv = new ListView($tid);
-			$lv->Display();	
+			global $cfg_list_son,$cfg_digg_update;
+			$tname=$GLOBALS['DB_Table_Name'];
+			$pgno=is_numeric($GLOBALS['ADM_PageNo'])? intval($GLOBALS['ADM_PageNo']) : 1;
+			$pgsz=$atts['pagesize'];
+			$limitstart= ($pgno-1)*$pgsz;
+			$result=array();
+			$query = "SELECT *  FROM `#@__$tname` arc  LIMIT $limitstart,$pgsz";
+			$mod=$this->Model('store');
+			$mod->SetQuery($query);
+			$mod->Execute('al');
+			while($row = $mod->GetArray("al"))
+			{
+				$result[]=$row;
+			}
+			return $result;
+
 		}
+		function GetPageList($atts,$refObj,$fields)
+		{
+			require_once(SUNINC."/pagelist.class.php");
+			$tname=$GLOBALS['DB_Table_Name'];
+			$pgno=is_numeric($GLOBALS['ADM_PageNo'])? intval($GLOBALS['ADM_PageNo']) : 1;
+			$mod = $this->Model('store');
+			$num = $mod->GetRowTotal($tname);
+			//$num,$pgno,$pgsz,$listitem
+			$pager= new PageList($num,$pgno,$atts['listsize'],$atts['listitem']);
+			return $pager->GetPageBar();
+		}		
 	}
 ?>

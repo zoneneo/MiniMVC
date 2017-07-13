@@ -58,7 +58,7 @@ class Control
     {
         $this->tpl->Assign($k, $v);
     }
-	//获取文档相关的各种变量
+    //获取文档相关的各种变量
     function GetVar($k)
     {
         global $_vars;
@@ -82,27 +82,27 @@ class Control
     
     function Libraries($name='',$data = '')
     {
-		if(defined('APPNAME')) 
-		{
-			$classfile = 'app_'.$name.'.class.php';
-			if ( file_exists ( '../'.APPNAME.'/libraries/'.$classfile ) )
-			{
-				require '../'.APPNAME.'/libraries/'.$classfile;
-				return new $name($data);
-			}else{
-				if (!empty($name) && class_exists($name))
-				{
-				return new $name($data);
-				}
-			}
-			return FALSE;
-		}else{
-			if (!empty($name) && class_exists($name))
-			{
-				return new $name($data);
-			}
-			return FALSE;
-		}
+        if(defined('APPNAME')) 
+        {
+            $classfile = 'app_'.$name.'.class.php';
+            if ( file_exists ( '../'.APPNAME.'/libraries/'.$classfile ) )
+            {
+                require '../'.APPNAME.'/libraries/'.$classfile;
+                return new $name($data);
+            }else{
+                if (!empty($name) && class_exists($name))
+                {
+                return new $name($data);
+                }
+            }
+            return FALSE;
+        }else{
+            if (!empty($name) && class_exists($name))
+            {
+                return new $name($data);
+            }
+            return FALSE;
+        }
     }  
     
     //载入helper

@@ -110,9 +110,10 @@ class SunPdo extends PDO {
         return count($this->result[$id]->fetchall());
     }
 
-    function GetTotal($tname){
-        $cquery = "SELECT COUNT(*) AS dd FROM `#@__$tname` ";
-        $row = $this->dsql->GetOne($cquery);
+    function GetRowTotal($tname){
+        $this->SetQuery("SELECT COUNT(*) AS dd FROM `#@__$tname` ");
+        $this->result['one']=$this->query($this->queryString);
+        $row = $this->result['one']->fetch(PDO::FETCH_ASSOC);
         if(is_array($row))
         {
             $result = $row['dd'];

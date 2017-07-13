@@ -28,12 +28,17 @@ $cfg_df_style = "default";
 $cfg_templets_dir = SUNTPL;
 $cfg_tplcache_dir = CACHE;
 //other
+
 $cfg_lang = 'utf8';
-$cfg_site = 'http://wx.xx.com';
+$cfg_site = $_SERVER["HTTP_HOST"];
+$cfg_basehost = $cfg_site;
+$cfg_cmspath= str_replace($_SERVER["DOCUMENT_ROOT"], '', SUNROOT);
 $cfg_api ='http://api.xx.com';
+$cfg_basedir=$cfg_basehost.$cfg_cmspath;
 $cfg_mediasurl='/static/upload';
-$cfg_cmspath = '/';
 $app_url = '/index.html?page=';
+
+
 
 $cfg_cookie = 'G_N_T_K';
 $cookie_encode = 'Genetalks';

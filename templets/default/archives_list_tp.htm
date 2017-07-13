@@ -8,15 +8,16 @@
 <div class="listbox">
 <table id="goods">
 <tbody>
-<tr><th>编号</th><th>分类</th><th>名称</th></tr>
-{sun:datalist pagesize='10'}
+<tr><th>编号</th><th>分类</th><th>图片</th><th>名称</th></tr>
+{sun:list pagesize='10'}
 <tr>
-<td>{sun:field.id/}</td>
-<td>{sun:field.typeid/}</td>
-<td><a href='{sun:field.title/}'>{sun:field.title/}</a></td>
+<td>[field:id/]</td>
+<td>[field:typeid/]</td>
+<td><img src="[field:litpic/]"></td>
+<td><a href='[field:arcurl/]'>[field:title/]</a></td>
 </tr>
-{/sun:datalist}
-{sun:pagelist listitem="info,index,end,pre,next,pageno,option" listsize="10" /}
+{/sun:list}
+{sun:pagelist listitem="info,index,end,pre,next,pageno,option" listsize="5" /}
 </tbody></table>
 </div>
 </body>

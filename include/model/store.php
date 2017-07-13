@@ -44,7 +44,7 @@ class Store extends PDO {
     }
 
     //执行一个SQL语句,返回前一条记录或仅返回一条记录
-    function GetOne($sql='')
+    function GetOne_($sql='')
     {
         if(!empty($sql))
         {
@@ -52,7 +52,7 @@ class Store extends PDO {
             else $this->SetQuery($sql);
         }
         $this->result['one']=$this->query($this->queryString);
-		return $this->result['one']->fetch(PDO::FETCH_ASSOC);
+        return $this->result['one']->fetch(PDO::FETCH_ASSOC);
     }
 
     //返回当前的一条记录并把游标移向下一记录
@@ -90,9 +90,10 @@ class Store extends PDO {
 		return count($this->result[$id]->fetchall());
 	}
 
-    function GetTotal($tname){
-        $cquery = "SELECT COUNT(*) AS dd FROM `#@__$tname` ";
-        $row = $this->GetOne($cquery);
+    function GetRowTotal($tname){
+        $this->SetQuery("SELECT COUNT(*) AS dd FROM `#@__$tname` ");
+        $this->result['one']=$this->query($this->queryString);
+        $row = $this->result['one']->fetch(PDO::FETCH_ASSOC);
         if(is_array($row))
         {
             $result = $row['dd'];

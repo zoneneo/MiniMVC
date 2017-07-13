@@ -28,7 +28,6 @@ class ListView
         global $dsql,$ftp;
 
         $this->TableN = $tname;
-        $this->dsql = &$dsql;
         $this->IsReplace = false;
         $this->IsError = false;
         $this->dtp = new SunTagParse();
@@ -42,8 +41,8 @@ class ListView
     }
 
     //php4构造函数
-    function ListView($tname,$uppage=0){
-        $this->__construct($tname,$uppage);
+    function ListView($dbsql,$tname,$uppage=0){
+        $this->__construct($dbsql,$tname,$uppage);
     }
     
     //关闭相关资源
@@ -61,7 +60,7 @@ class ListView
     {
         //统计数据库记录
         $this->TotalResult = -1;
-        $this->dsql->GetTotal($this->TableN)
+        $this->dsql->GetTotal($this->TableN);
         if(isset($GLOBALS['TotalResult'])) $this->TotalResult = $GLOBALS['TotalResult'];
         if(isset($GLOBALS['PageNo'])) $this->PageNo = $GLOBALS['PageNo'];
         else $this->PageNo = 1;
