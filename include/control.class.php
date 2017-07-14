@@ -46,6 +46,12 @@ class Control
         $this->tpldir .='/'.$tplfile;
     }
 	
+    function GetTemplate($tplfile,$path='')
+    {
+        $this->SetTpldir($tplfile,$path);
+        return $this->tpldir;
+    }
+
     //设置模板,如果想要使用模板中指定的pagesize，必须在调用模板后才调用 SetSource($sql)
     function SetTemplate($tplfile,$path='')
     {

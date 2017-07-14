@@ -30,14 +30,13 @@
 	</script>
 </HEAD>
 <body>
-
-<ul style="margin:15px auto;text-align:left;">
-<form name="archives" action="index.php" method="post" enctype="multipart/form-data">
-<li>
+<form name="archives" action="?ct=admin&ac=update&to=archives" method="post" enctype="multipart/form-data">
 <input type="hidden" name="ct" value="admin" />
-<input type="hidden" name="ac" value="append" />
+<input type="hidden" name="ac" value="update" />
 <input type="hidden" name="to" value="archives" />
-
+<input type="hidden" name="key" value="{sun:var.arr.id/}" />
+<ul style="margin:15px auto;text-align:left;">
+<li>
 <label>分类：</label> <input name="typeid" type="text" value="{sun:var.arr.typeid/}" style="width:100px" />
 <label>属性：</label><select name="flag" style="width:100px">
 <option value="p">普通[p]</option><option value="c">推荐[c]</option>
@@ -65,7 +64,7 @@
 <li><input type="submit" name="button" value="确 认 提 交" /></li>
 <li><textarea name="gbody" style="width:1000px;height:500px;">{sun:var.arr.gbody/}</textarea></li>
 <li><input type="submit" name="button" value="确 认 提 交" /></li>
-</form>
 </ul>
+</form>
 </body>
 </HTML>

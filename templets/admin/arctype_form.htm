@@ -1,10 +1,31 @@
-<html><head><title></title></head><body><ul>
+<html><head><title></title></head><body>
 <form method='post' action='index.php?' name='arctype'>
 <input type='hidden' name='to' value='arctype' />
 <input type='hidden' name='ct' value='admin' />
-<input type='hidden' name='ac' value='append' />
-<li><label>0 id</label><input type='text' name='id' value=''></li>
-<li><label>1 reid</label><input type='text' name='reid' value=''></li>
-<li><label>2 topid</label><input type='text' name='topid' value=''></li>
-<li><label>3 tname</label><input type='text' name='tname' value=''></li>
-<input type='submit' name='button' value='确 认'></form></ul></body></html>
+<input type='hidden' name='ac' value='insert' /><ul>
+<li><label>id</label><input type='text' name='id' value='{sun:var.arr.id/}'></li>
+<li><label>reid</label><input type='text' name='reid' value='{sun:var.arr.reid/}'></li>
+<li><label>topid</label><input type='text' name='topid' value='{sun:var.arr.topid/}'></li>
+<li><label>sortrank</label><input type='text' name='sortrank' value='{sun:var.arr.sortrank/}'></li>
+<li><label>typename</label><input type='text' name='typename' value='{sun:var.arr.typename/}'></li>
+<li><label>typedir</label><input type='text' name='typedir' value='{sun:var.arr.typedir/}'></li>
+<li><label>isdefault</label><input type='text' name='isdefault' value='{sun:var.arr.isdefault/}'></li>
+<li><label>defaultname</label><input type='text' name='defaultname' value='{sun:var.arr.defaultname/}'></li>
+<li><label>issend</label><input type='text' name='issend' value='{sun:var.arr.issend/}'></li>
+<li><label>channeltype</label><input type='text' name='channeltype' value='{sun:var.arr.channeltype/}'></li>
+<li><label>maxpage</label><input type='text' name='maxpage' value='{sun:var.arr.maxpage/}'></li>
+<li><label>ispart</label><input type='text' name='ispart' value='{sun:var.arr.ispart/}'></li>
+<li><label>corank</label><input type='text' name='corank' value='{sun:var.arr.corank/}'></li>
+<li><label>tempindex</label><input type='text' name='tempindex' value='{sun:var.arr.tempindex/}'></li>
+<li><label>templist</label><input type='text' name='templist' value='{sun:var.arr.templist/}'></li>
+<li><label>temparticle</label><input type='text' name='temparticle' value='{sun:var.arr.temparticle/}'></li>
+<li><label>namerule</label><input type='text' name='namerule' value='{sun:var.arr.namerule/}'></li>
+<li><label>namerule2</label><input type='text' name='namerule2' value='{sun:var.arr.namerule2/}'></li>
+<li><label>modname</label><input type='text' name='modname' value='{sun:var.arr.modname/}'></li>
+<li><label>description</label><input type='text' name='description' value='{sun:var.arr.description/}'></li>
+<li><label>keywords</label><input type='text' name='keywords' value='{sun:var.arr.keywords/}'></li>
+<li><label>seotitle</label><input type='text' name='seotitle' value='{sun:var.arr.seotitle/}'></li>
+<li><label>ishidden</label><input type='text' name='ishidden' value='{sun:var.arr.ishidden/}'></li>
+<li><label>content</label><input type='text' name='content' value='{sun:var.arr.content/}'></li>
+<li><label>smalltypes</label><input type='text' name='smalltypes' value='{sun:var.arr.smalltypes/}'></li>
+<input type='submit' name='button' value='确 认'></ul></form></body></html>

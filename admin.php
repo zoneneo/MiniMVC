@@ -21,59 +21,83 @@
 			$GLOBALS['DB_Table_Name']=$to;
 			$GLOBALS['ADM_PageNo']=is_numeric($PageNo)? $PageNo : 1;
 			$GLOBALS['ADM_PageSize']=is_numeric($PageSize)? $PageSize : 10;
-			$this->SetTemplate($to."_list.htm","admin");
+			$this->SetTemplate($to."_list.htm");
 			$this->Display();
 		}
 		public function ac_goods()
 		{
 			global $_REQUEST;
 			extract($_REQUEST);
-			// require_once(SUNINC."/list.class.php");
-			// $tempfile = SUNTPL."/default/archives_list.htm";
-			// $tid = is_numeric($tid) ? $tid : 0;
-			// $lv = new ListView($tid);
-
-			require_once(SUNINC."/dblist.class.php");
-			$GLOBALS['cfg_to_table']=$to;
-			$lv = new ListView($to);
-
+			require_once(SUNINC."/list.class.php");
+			$tempfile = SUNTPL."/default/archives_list.htm";
+			$tid = is_numeric($tid) ? $tid : 0;
+			$lv = new ListView($tid);
 			$lv->Display();	
 		}
 		public function ac_record()
 		{
 			global $_REQUEST;
 			extract($_REQUEST);
-			$GLOBALS['cfg_cur_tname']=$to;
-			$arr=$this->assemble($to,$ac);
-			$tpl=$to."_form.htm";
-			$tmp=$this->GetTemplate($tpl,"admin");
-			if(!file_exists($tmp)){
-				$this->BuildForm($tmp,"update");
-			}			
-			$this->SetTemplate($tpl,"admin");
+			$sql=$this->assemble($to,$ac);
+			$arr=$this->Model('store')->GetOne($sql);
+			//$this->SetTemplate($to."_".$ac.".htm");
+			$this->SetTemplate($to."_form.htm");
 			$this->SetVar('arr',$arr);
 			$this->Display();
 		}
 		public function ac_remove(){
 			global $_REQUEST;
 			extract($_REQUEST);
-			$aff=$this->assemble($to,$ac);
+			$sql=$this->assemble($to,$ac);
+			$key=preg_replace('/[^\d]/', '', $_REQUEST['key']);
+			$mod=$this->Model('store')->prepare($sql);
+			$aff=$mod->execute(array(':key'=>$key));
 			if($aff) echo 'ok';
 			else	echo 'err';
 		}
-		public function ac_insert(){
+		public function ac_append(){
 			global $_REQUEST;
 			extract($_REQUEST);
-			$aff=$this->assemble($to,$ac);
+			$sql=$this->assemble($to,$ac);
+			$aff=$this->Model('store')->Execute($sql);
 			if($aff) echo 'ok';
 			else	echo 'err';
 		}
 		public function ac_update(){
 			global $_REQUEST;
 			extract($_REQUEST);
-			$aff=$this->assemble($to,$ac);
+			$sql=$this->assemble($to,$ac);	
+			$key=preg_replace('/[^\d]/', '', $_REQUEST['key']);
+			$mod=$this->Model('store')->prepare($sql);
+			$aff=$mod->execute(array(':key'=>$key));
 			if($aff) echo 'ok';
 			else	echo 'err';
+		}
+		public function ac_forms(){
+			global $_REQUEST;
+			extract($_REQUEST);
+			$tmpfile=$this->tpldir.'/'.$to.'_form.htm';
+			if(!file_exists($tmpfile))
+			{
+				$loop="<li><label>[$v}</label><input type='text' name='[$v]' value='{$v}'></li>\r\n";
+				$htm ="<html><head><title></title></head><body>\r\n";
+				$htm .="<form method='post' action='index.php?' name='$to'>\r\n";
+				$htm .="<input type='hidden' name='to' value='$to' />\r\n";
+				$htm .="<input type='hidden' name='ct' value='admin' />\r\n";
+				$htm .="<input type='hidden' name='ac' value='append' /><ul>\r\n";
+				$htm .="{<li><label></label><input type='hidden' name='' value='' /></li>\}";
+				$htm .="<input type='submit' name='button' value='确 认'></ul></form></body></html>";
+
+				$fields=$this->Model('store')->GetTabFields('#@__'.$to,'me');
+				foreach ($fields as $k => $v) {
+
+
+				}
+				$this->BuildForm($tmpfile,$fields,$to);
+
+			}
+			$this->SetTemplate($to."_form.htm");		
+			$this->Display();
 		}
 		public function ac_auth(){
 			global $_REQUEST,$_SESSION;
@@ -117,38 +141,27 @@
 		public function assemble($tname,$ac)
 		{
 			global $_REQUEST;
-			$QLS = compact(array('record','remove','insert','update'));
+			$sql = compact(array('listing','record','remove','insert','update'));
 			$vals="";
 			$allow=array();
+			$field = $this->Model('store')->GetFields("#@__".$tname);
+			$this->Options($field,$allow);
+			$flds=implode(",",array_keys($allow));
+			$vars=implode("','",$allow);
 			$key=preg_replace('/[^\d]/', '', $_REQUEST['key']);
-			$mod = $this->Model('store');			
-			if($ac=='update'||$ac=='insert')
-			{
-				$field = $mod->GetTabFields("#@__".$tname);
-				$this->Options($field,$allow);
-				$flds=implode(",",array_keys($allow));
-				$vars=implode("','",$allow);
-				foreach($allow as $k=>$v){
-					$vals .="$k =@{$k},";
-				}
-				$vals= preg_replace('/\,$/', '', $vals);
+			foreach($allow as $k=>$v){
+				$vals .="$k =@{$k},";
 			}
-			$QLS['record'] = "SELECT * FROM #@__{$tname} WHERE id =:key";
-			$QLS['remove'] = "DELETE FROM #@__{$tname} WHERE id = {$key}";
-			$QLS['update'] = "UPDATE #@__{$tname} SET {$vals} WHERE id ={$key} ";
-			$QLS['insert'] = "INSERT INTO #@__{$tname} ({$flds}) VALUES('{$vars}')";
-			if(array_key_exists($ac,$QLS)){
-				$ql=$mod->SetQuery($QLS[$ac]);
-				if($ac=='record'){
-					$pre=$mod->prepare($ql);
-					$pre->execute(array(':key'=>$key));
-					// $pre->debugDumpParams();
-					return $pre->fetch(PDO::FETCH_ASSOC);
-				}else{
-					return $mod->exec($ql);
-				}
+			$vals= preg_replace('/\,$/', '', $vals);
+			$sql['listing']= "SELECT {$scope} FROM #@__{$tname}";	
+			$sql['record'] = "SELECT {$scope} FROM #@__{$tname} WHERE id ='{$key}'";
+			$sql['remove'] = "DELETE FROM #@__{$tname} WHERE id = :key";
+			$sql['update'] = "UPDATE #@__{$tname} SET {$vals} WHERE id =:key ";
+			$sql['insert'] = "INSERT INTO #@__{$tname} ({$flds}) VALUES('{$vars}')";
+			if(array_key_exists($ac,$sql)){
+				return $sql[$ac];				
 			}else{
-				return null;
+				return '';
 			}
 		}		
 		public function Options($scope,&$allow)
@@ -161,23 +174,19 @@
 				}
 			}
 		}
-		function BuildForm($tplname, $act="insert")
+		function BuildForm($tplname,$fields,$to)
 		{
-			extract($_REQUEST);
+			$loop="<li><label>[$v}</label><input type='text' name='[$v]' value='{$v}'></li>\r\n";
 			$htm ="<html><head><title></title></head><body>\r\n";
-			$htm .="<form method='post' action='index.php?' name='{$to}'>\r\n";
-			$htm .="<input type='hidden' name='to' value='{$to}' />\r\n";
-			$htm .="<input type='hidden' name='ct' value='{$ct}' />\r\n";
-			$htm .="<input type='hidden' name='ac' value='{$act}' /><ul>\r\n";
-			$mod=$this->Model('store');
-			$fields=$mod->GetTabFields('#@__'.$to,'me');
-			foreach ($fields as $k => $v) {
-				$htm .="<li><label>{$v}</label><input type='text' name='{$v}' value='{sun:var.arr.{$v}/}'></li>\r\n";
-			}
+			$htm .="<form method='post' action='index.php?' name='$to'>\r\n";
+			$htm .="<input type='hidden' name='to' value='$to' />\r\n";
+			$htm .="<input type='hidden' name='ct' value='admin' />\r\n";
+			$htm .="<input type='hidden' name='ac' value='append' /><ul>\r\n";
+			$htm .="{$loop}";
 			$htm .="<input type='submit' name='button' value='确 认'></ul></form></body></html>";
-			$fp = fopen($tplname,'w');
-			fwrite($fp,$htm);
-			fclose($fp);
+			//$fp = fopen($tplname,'w');			
+			// fwrite($fp,$htm);
+			// fclose($fp);
 		}
 		function GetArcList($atts,$refObj,$fields)
 		{
@@ -208,6 +217,6 @@
 			//$num,$pgno,$pgsz,$listitem
 			$pager= new PageList($num,$pgno,$atts['listsize'],$atts['listitem']);
 			return $pager->GetPageBar();
-		}
+		}		
 	}
 ?>

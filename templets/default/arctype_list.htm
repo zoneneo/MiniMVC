@@ -8,6 +8,7 @@
 <div class="listbox">
 <table id="goods">
 <tbody>
+<<<<<<< HEAD
 <tr><th>编号</th><th>分类</th><th>名称</th></tr>
 {sun:datalist pagesize='10'}
 <tr>
@@ -21,3 +22,22 @@
 </div>
 </body>
 </html>
+=======
+<tr><th> UPDATE </th><th>编号</th><th>分类</th><th>图片</th><th>名称</th></tr>
+{sun:list pagesize='10'}
+<tr>
+<td>
+<a href="?ct=admin&ac=remove&to=[field:to_table/]&key=[field:id/]">Delete</a>
+<a href="?ct=admin&ac=record&to=[field:to_table/]&key=[field:id/]">Update</a>
+</td>
+<td>[field:id/]</td>
+<td>[field:reid/]</td>
+<td><a href='[field:arcurl/]'>[field:typename/]</a></td>
+</tr>
+{/sun:list}
+{sun:pagelist listitem="info,index,end,pre,next,pageno,option" listsize="5" /}
+</tbody></table>
+</div>
+</body>
+</html>
+>>>>>>> 3eb95604d62cfc5d0d850cc155c56539e9c70c53

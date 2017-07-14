@@ -11,9 +11,12 @@
 <tr><th>编号</th><th>分类</th><th>名称</th></tr>
 {sun:datalist pagesize='10'}
 <tr>
-<td>{sun:field.id/}</td>
-<td>{sun:field.typeid/}</td>
-<td><a href='?ct=admin&ac=record&to=archives&key={sun:field.id/}'>{sun:field.title/}</a></td>
+<td>
+<a href="?ct=admin&ac=remove&to=arctype&key={sun:field.id/}">Delete</a>
+<a href="?ct=admin&ac=record&to=arctype&key={sun:field.id/}">Update</a>
+{sun:field.id/}</td>
+<td>{sun:field.reid/}</td>
+<td><a href='?ct=admin&ac=record&to=arctype&key={sun:field.id/}'>{sun:field.typename/}</a></td>
 </tr>
 {/sun:datalist}
 {sun:pagelist listitem="info,index,end,pre,next,pageno,option" listsize="10" /}
