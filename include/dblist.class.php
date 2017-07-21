@@ -23,11 +23,13 @@ class ListView
     var $CrossID;
     var $IsReplace;
     
-    function __construct($tname, $uppage=1)
+    function __construct($tname, $typeid, $uppage=1)
     {
         global $dsql,$ftp;
 
-        $this->TableN = $tname;
+        $this->table = $tname;
+        $this->TypeID=$typeid;
+        $this->dsql = $dsql;
         $this->IsReplace = false;
         $this->IsError = false;
         $this->dtp = new SunTagParse();
@@ -41,8 +43,8 @@ class ListView
     }
 
     //php4构造函数
-    function ListView($dbsql,$tname,$uppage=0){
-        $this->__construct($dbsql,$tname,$uppage);
+    function ListView($tname,$typeid,$uppage=0){
+        $this->__construct($tname,$typeid,$uppage);
     }
     
     //关闭相关资源
@@ -60,7 +62,14 @@ class ListView
     {
         //统计数据库记录
         $this->TotalResult = -1;
-        $this->dsql->GetTotal($this->TableN);
+        $wheresql='';
+        if(isset($GLOBALS['sql_where']))
+            $wheresql .=" WHERE ".$GLOBALS['sql_where']."='";
+            $wheresql .= isset($GLOBALS['sql_value']) ? $GLOBALS['sql_value']."'" : "'";
+
+        $ql="SELECT * FROM #@__".$this->table.$wheresql;
+        $this->dsql->Execute('tt',$ql);
+        $this->TotalResult=$this->dsql->GetTotalRow('tt');
         if(isset($GLOBALS['TotalResult'])) $this->TotalResult = $GLOBALS['TotalResult'];
         if(isset($GLOBALS['PageNo'])) $this->PageNo = $GLOBALS['PageNo'];
         else $this->PageNo = 1;
@@ -91,22 +100,22 @@ class ListView
     function Display()
     {
 
-        $tempfile = SUNTPL."/default/".$this->TableN."_list.htm";
+        $tempfile = SUNTPL."/admin/list_".$this->table.".htm";
         if(!file_exists($tempfile)||!is_file($tempfile))
         {
             echo "模板文件不存在，无法解析文档！";
             exit();
         }
         $this->dtp->LoadTemplate($tempfile);
-
+        $this->PageNo = $GLOBALS['PageNo'];
         $this->CountRecord();
-        $this->ParseDMFields($this->TableN,$this->PageNo,0);     
+        $this->ParseDMFields($this->PageNo,0);     
         $this->dtp->Display();
 
         
     }
 
-    function ParseDMFields($tname,$PageNo,$ismake=1)
+    function ParseDMFields($PageNo,$ismake=1)
     {
         foreach($this->dtp->CTags as $tagid=>$ctag)
         {
@@ -117,7 +126,6 @@ class ListView
                 $InnerText = trim($ctag->GetInnerText());
                 $this->dtp->Assign($tagid,
                 $this->GetArcList(
-                $tname,
                 $limitstart,
                 $row,
                 $ctag->GetAtt("col"),
@@ -147,7 +155,7 @@ class ListView
         }
     }
 
-    function GetArcList($tname,$limitstart=0,$row=10,$col=1,$titlelen=30,$infolen=250,
+    function GetArcList($limitstart=0,$row=10,$col=1,$titlelen=30,$infolen=250,
     $imgwidth=120,$imgheight=90,$listtype="all",$orderby="default",$innertext="",$tablewidth="100",$ismake=1,$orderWay='desc')
     {
         global $cfg_list_son,$cfg_digg_update;
@@ -181,8 +189,11 @@ class ListView
 
         //排序方式
         $ordersql = '';
-
-        $query = "SELECT *  FROM `#@__{$tname}` arc $ordersql LIMIT $limitstart,$row";
+        $wheresql = '';
+        if(isset($GLOBALS['sql_where']))
+            $wheresql .=" WHERE ".$GLOBALS['sql_where']."='";
+            $wheresql .= isset($GLOBALS['sql_value']) ? $GLOBALS['sql_value']."'" : "'";
+        $query = "SELECT *  FROM `#@__".$this->table."`".$wheresql.$ordersql." LIMIT $limitstart,$row";
         $this->dsql->SetQuery($query);
         $this->dsql->Execute('al');
 
@@ -259,7 +270,7 @@ class ListView
             $purl = $nowurls[0];
         }
 
-        $geturl = "tid=".$this->TypeID."&TotalResult=".$this->TotalResult."&";
+        $geturl = "ct=admin&ac=arclist&to=archives&typeid=".$this->TypeID."&TotalResult=".$this->TotalResult."&";
         $purl .= '?'.$geturl;
         
         $optionlist = '';

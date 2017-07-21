@@ -1,0 +1,47 @@
+<html><head><title>
+</title>
+<link rel="stylesheet" href="images/CssAdmin.css">
+<link rel="stylesheet" href="themes/default/default.css" />
+<link rel="stylesheet" href="plugins/code/prettify.css" />
+<script charset="utf-8" src="kindeditor.js"></script>
+<script charset="utf-8" src="lang/en.js"></script>
+<script charset="utf-8" src="plugins/code/prettify.js"></script>
+<script>
+KindEditor.ready(function(K) {
+	var editor1 = K.create('textarea[name="descr"]', {
+		cssPath : 'plugins/code/prettify.css',
+		uploadJson : 'upload_json.php',
+		fileManagerJson : 'file_manager_json.php',
+		allowFileManager : true,
+		afterCreate : function() {
+			var self = this;
+			K.ctrl(document, 13, function() {
+				self.sync();
+				K('form[name=example]')[0].submit();
+			});
+			K.ctrl(self.edit.doc, 13, function() {
+				self.sync();
+				K('form[name=example]')[0].submit();
+			});
+		}
+	});
+	prettyPrint();
+});
+</script>
+</head><body>
+<form method='post' action='index.php?' name='adlink'>
+<input type='hidden' name='to' value='adlink' />
+<input type='hidden' name='ct' value='admin' />
+<input type='hidden' name='ac' value='update' />
+<input type='hidden' name='key' value='{sun:var.arr.id/}' /><ul>
+<li><label>时间</label><input type='text' name='sendate' value='{sun:var.arr.sendate/}'></li>
+<li><label>pubdate</label><input type='text' name='pubdate' value='{sun:var.arr.pubdate/}'></li>
+<li><label>标识</label><input type='text' name='flag' value='{sun:var.arr.flag/}'></li>
+<li><label>链接</label><input type='text' name='link' value='{sun:var.arr.link/}'></li>
+<li><label>宽度</label><input type='text' name='width' value='{sun:var.arr.width/}'></li>
+<li><label>高度</label><input type='text' name='height' value='{sun:var.arr.height/}'></li>
+<li><label>图片</label><input type='text' name='litpic' value='{sun:var.arr.litpic/}'></li>
+<li><label>标题</label><input type='text' name='title' value='{sun:var.arr.title/}'></li>
+<li><label>描述</label><textarea name="descr" style="width:1000px;height:500px;">{sun:var.arr.descr/}</textarea></li>
+<input type='submit' name='button' value='确 认'></ul>
+</form></body></html>

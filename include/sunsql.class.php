@@ -114,11 +114,17 @@ class SunSql
         $this->Execute($id,$sql);
     }
 
-
-
-
-
-
+    //执行一个SQL语句,返回前一条记录或仅返回一条记录
+    function GetOne($sql='')
+    {
+        if(!empty($sql))
+        {
+            if(!preg_match("/LIMIT/i",$sql)) $this->SetQuery(preg_replace("/[,;]$/i", '', trim($sql))." LIMIT 0,1;");
+            else $this->SetQuery($sql);
+        }
+        $this->result['one']=$this->query($this->queryString);
+        return $this->result['one']->fetch(PDO::FETCH_ASSOC);
+    }
 	
 	//获取数据库所有表
 	function GetDBTables($id='me')

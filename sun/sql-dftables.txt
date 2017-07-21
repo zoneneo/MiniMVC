@@ -1,0 +1,120 @@
+DROP TABLE IF EXISTS `#@__admin`;
+CREATE TABLE `#@__admin` (
+  `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+  `typ` tinyint(3) unsigned DEFAULT '0',
+  `tme` int(10) unsigned DEFAULT '0',
+  `usr` char(30) DEFAULT '',
+  `pwd` char(32) DEFAULT '',
+  `email` varchar(30) DEFAULT '',
+  `logip` varchar(20) DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=100 DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `#@__arccache`;
+CREATE TABLE `#@__arccache` (
+  `md5hash` char(32) NOT NULL DEFAULT '',
+  `uptime` int(11) NOT NULL DEFAULT '0',
+  `cachedata` mediumtext
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `#@__archives`;
+CREATE TABLE `#@__archives` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `typ` smallint(6) DEFAULT '0',
+  `typeid` smallint(5) DEFAULT '1',
+  `typeid2` smallint(5) DEFAULT NULL,
+  `sendate` int(10) DEFAULT NULL,
+  `pubdate` int(10) NOT NULL,
+  `sortrank` smallint(5) DEFAULT '100',
+  `click` varchar(10) DEFAULT '',
+  `flag` set('c','h','p','f','s') DEFAULT 'p',
+  `link` varchar(100) DEFAULT '',
+  `litpic` varchar(100) DEFAULT '',
+  `picture` varchar(100) DEFAULT '',
+  `title` varchar(100) DEFAULT '',
+  `words` varchar(100) DEFAULT '',
+  `descr` varchar(200) DEFAULT '',
+  `gbody` text,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `#@__arctiny`;
+CREATE TABLE `#@__arctiny` (
+  `id` mediumint(8) unsigned NOT NULL,
+  `typeid` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `typeid2` varchar(90) NOT NULL DEFAULT '0',
+  `arcrank` smallint(6) NOT NULL DEFAULT '0',
+  `channel` smallint(5) NOT NULL DEFAULT '1',
+  `senddate` int(10) unsigned NOT NULL DEFAULT '0',
+  `sortrank` int(10) unsigned NOT NULL DEFAULT '0',
+  `mid` mediumint(8) unsigned NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `#@__arctype`;
+CREATE TABLE `#@__arctype` (
+  `id` smallint(5) unsigned AUTO_INCREMENT,
+  `reid` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `topid` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `sortrank` smallint(5) unsigned NOT NULL DEFAULT '50',
+  `typename` char(30) NOT NULL DEFAULT '',
+  `typedir` char(60) NOT NULL DEFAULT '',
+  `isdefault` smallint(6) NOT NULL DEFAULT '0',
+  `defaultname` char(15) NOT NULL DEFAULT 'index.html',
+  `issend` smallint(6) NOT NULL DEFAULT '0',
+  `channeltype` smallint(6) DEFAULT '1',
+  `maxpage` smallint(6) NOT NULL DEFAULT '-1',
+  `ispart` smallint(6) NOT NULL DEFAULT '0',
+  `corank` smallint(6) NOT NULL DEFAULT '0',
+  `tempindex` char(50) NOT NULL DEFAULT '{style}/index_article.htm',
+  `templist` char(50) NOT NULL DEFAULT '{style}/list_article.htm',
+  `temparticle` char(50) NOT NULL DEFAULT '{style}/article_article.htm',
+  `namerule` char(50) NOT NULL DEFAULT '{typedir}/{Y}{M}{D}/{aid}.html',
+  `namerule2` char(50) NOT NULL DEFAULT '{typedir}/list_{tid}_{page}.html',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `#@__adlink`;
+CREATE TABLE `#@__adlink` (
+  `id` smallint(6) unsigned AUTO_INCREMENT,
+  `sendate` int(10) DEFAULT NULL,
+  `pubdate` int(10) NOT NULL,
+  `flag` set('c','h','p','f','s') DEFAULT 'p',
+  `link` varchar(100) DEFAULT '',
+  `width` varchar(6) DEFAULT '',
+  `height` varchar(6) DEFAULT '',
+  `litpic` varchar(100) DEFAULT '',
+  `title` varchar(100) DEFAULT '',
+  `descr` varchar(200) DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `#@__channeltype`;
+CREATE TABLE `#@__channeltype` (
+  `id` smallint(6) NOT NULL DEFAULT '0',
+  `nid` varchar(20) NOT NULL DEFAULT '',
+  `typename` varchar(30) NOT NULL DEFAULT '',
+  `maintable` varchar(50) NOT NULL DEFAULT 'sun_archives',
+  `addtable` varchar(50) NOT NULL DEFAULT '',
+  `addcon` varchar(30) NOT NULL DEFAULT '',
+  `mancon` varchar(30) NOT NULL DEFAULT '',
+  `editcon` varchar(30) NOT NULL DEFAULT '',
+  `useraddcon` varchar(30) NOT NULL DEFAULT '',
+  `usermancon` varchar(30) NOT NULL DEFAULT '',
+  `usereditcon` varchar(30) NOT NULL DEFAULT '',
+  `fieldset` text,
+  `listfields` text,
+  `allfields` text,
+  `issystem` smallint(6) NOT NULL DEFAULT '0',
+  `isshow` smallint(6) NOT NULL DEFAULT '1',
+  `issend` smallint(6) NOT NULL DEFAULT '0',
+  `arcsta` smallint(6) NOT NULL DEFAULT '-1',
+  `usertype` char(10) NOT NULL DEFAULT '',
+  `sendrank` smallint(6) NOT NULL DEFAULT '10',
+  `isdefault` smallint(6) NOT NULL DEFAULT '0',
+  `needdes` tinyint(1) NOT NULL DEFAULT '1',
+  `needpic` tinyint(1) NOT NULL DEFAULT '1',
+  `titlename` varchar(20) NOT NULL DEFAULT '标题',
+  `onlyone` smallint(6) NOT NULL DEFAULT '0',
+  `dfcid` smallint(5) unsigned NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;

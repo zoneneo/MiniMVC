@@ -13,7 +13,6 @@ $php_path = dirname(__FILE__) . '/';
 $php_url = dirname($_SERVER['PHP_SELF']) . '/';
 
 
-
 //文件保存目录路径
 $save_path = $php_path . '../uploads/';
 //文件保存目录URL
@@ -80,14 +79,14 @@ if (empty($_FILES) === false) {
 			mkdir($save_path);
 		}
 	}
-	$ymd = date("Ymd");
-	$save_path .= $ymd . "/";
-	$save_url .= $ymd . "/";
-	if (!file_exists($save_path)) {
-		mkdir($save_path);
-	}
+	// $ymd = date("Ymd");
+	// $save_path .= $ymd . "/";
+	// $save_url .= $ymd . "/";
+	// if (!file_exists($save_path)) {
+	// 	mkdir($save_path);
+	// }
 	//新文件名
-	$new_file_name = date("YmdHis") . '_' . rand(10000, 99999) . '.' . $file_ext;
+	$new_file_name = date("YmdHis") . '_' . rand(1000, 9999) . '.' . $file_ext;
 	//移动文件
 	$file_path = $save_path . $new_file_name;
 	if (move_uploaded_file($tmp_name, $file_path) === false) {

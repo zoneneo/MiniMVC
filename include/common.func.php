@@ -339,4 +339,15 @@ $str=str_replace("{Title}",$title,$str);
 echo str_replace("{Message}",$msg,$str);
 }
 
+if ( ! function_exists('ExecTime'))
+{
+    function ExecTime()
+    {
+        $time = explode(" ", microtime());
+        $usec = (double)$time[0];
+        $sec = (double)$time[1];
+        return $sec + $usec;
+    }
+}
+
 ?>

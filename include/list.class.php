@@ -1,7 +1,7 @@
 <?php   if(!defined('SUNINC')) exit('Request Error!');
 
 require_once(SUNINC."/suntag.class.php");
-
+require_once(SUNINC.'/typelink.class.php');
 
 class ListView
 {
@@ -36,10 +36,24 @@ class ListView
         $this->dtp->SetNameSpace("sun", "{", "}");
         $this->dtp2 = new SunTagParse();            
         $this->dtp2->SetNameSpace("field","[","]");
+        $this->TypeLink = new TypeLink($typeid);
         $this->upPageType = $uppage;
         $this->TotalResult = is_numeric($this->TotalResult)? $this->TotalResult : "";
-        
+        //$this->Fields=$this->dsql->GetOne("SELECT id,typedir,tempindex,templist,namerule,namerule2 FROM #@__arctype WHERE id={$typeid}");
+        if(!is_array($this->TypeLink->TypeInfos))
+        {
+            $this->IsError = true;
+        }
+        if(!$this->IsError)
+        {       
+            //$this->ChannelUnit = new ChannelUnit($this->TypeLink->TypeInfos['channeltype']);
+            $this->Fields = $this->TypeLink->TypeInfos;
+            $this->Fields['id'] = $typeid;
+            // $this->Fields['position'] = $this->TypeLink->GetPositionLink(true);
+            // $this->Fields['title'] = preg_replace("/[<>]/", " / ", $this->TypeLink->GetPositionLink(false));    
+        }//!error 
     }
+
 
     //php4构造函数
     function ListView($typeid,$uppage=0){
@@ -81,8 +95,11 @@ class ListView
                 $this->TotalResult = 0;
             }
         }
+        #$tempfile = SUNTPL."/default/list_default.htm";
+        $tempfile = SUNTPL."/".$this->TypeLink->TypeInfos['templist'];
+        $tempfile = str_replace("{tid}", $this->TypeID, $tempfile);
+        echo 'temp file: '.$tempfile;
 
-        $tempfile = SUNTPL."/default/archives_list.htm";
         if(!file_exists($tempfile)||!is_file($tempfile))
         {
             echo "模板文件不存在，无法解析文档！";
@@ -204,7 +221,10 @@ class ListView
         else {
             $sonidsCon = " arc.typeid IN($sonids) ";
         }
-        $query = "SELECT *  FROM `#@__archives` arc WHERE $sonidsCon $ordersql LIMIT $limitstart,$row";
+        //$query = "SELECT *  FROM `#@__archives` arc WHERE $sonidsCon $ordersql LIMIT $limitstart,$row";
+        $query = "SELECT arc.*,tp.namerule,tp.namerule2,tp.isdefault,tp.defaultname,tp.typedir FROM `#@__archives` arc  
+        LEFT JOIN `#@__arctype` tp ON arc.typeid=tp.id WHERE $sonidsCon $ordersql LIMIT $limitstart,$row";
+
         $this->dsql->SetQuery($query);
         $this->dsql->Execute('al');
 
@@ -222,6 +242,9 @@ class ListView
                 if($row = $this->dsql->GetArray("al"))
                 {
                     $GLOBALS['autoindex']++;
+                    //function GetFileUrl($aid,$typeid,$timetag,$title,$ismake=0,$rank=0,$namerule='',$typedir='', $money=0, $filename='',$moresite=0,$siteurl='',$sitepath='')
+                    $row['filename'] = $row['arcurl'] = GetFileUrl($row['id'],$row['typeid'],$row['senddate'],$row['title'],0,0,$row['namerule'],$row['typedir'],$row['filename']);
+                    $row['typeurl'] = GetTypeUrl($row['typeid'],MfTypedir($row['typedir']),$row['isdefault'],$row['defaultname'],$row['namerule2'],$row['siteurl']);
                     if($row['litpic'] == '-' || $row['litpic'] == '')
                     {
                         $row['litpic'] = $GLOBALS['cfg_cmspath'].'/images/defaultpic.gif';
@@ -379,5 +402,156 @@ class ListView
         }
         return $nowurl;
     }
-/**/
+
+    /**
+     *  列表创建HTML
+     *
+     * @access    public
+     * @param     string  $startpage  开始页面
+     * @param     string  $makepagesize  创建文件数目
+     * @param     string  $isremote  是否为远程
+     * @return    string
+     */
+    function MakeHtml($startpage=1, $makepagesize=0, $isremote=0)
+    {
+        global $cfg_remote_site;
+        if(empty($startpage))
+        {
+            $startpage = 1;
+        }
+
+        $this->CountRecord();
+        //初步给固定值的标记赋值
+        //$this->ParseTempletsFirst();
+        $totalpage = ceil($this->TotalResult/$this->PageSize);
+        if($totalpage==0)
+        {
+            $totalpage = 1;
+        }
+        echo '<br>typedir is:'.MfTypedir($this->Fields['typedir']);
+        CreateDir(MfTypedir($this->Fields['typedir']));
+        $murl = '';
+        if($makepagesize > 0)
+        {
+            $endpage = $startpage+$makepagesize;
+        }
+        else
+        {
+            $endpage = ($totalpage+1);
+        }
+        if( $endpage >= $totalpage+1 )
+        {
+            $endpage = $totalpage+1;
+        }
+        if($endpage==1)
+        {
+            $endpage = 2;
+        }
+        for($this->PageNo=$startpage; $this->PageNo < $endpage; $this->PageNo++)
+        {
+            $this->ParseDMFields($this->PageNo,1);
+            $makeFile = $this->GetMakeFileRule($this->Fields['id'],'list',$this->Fields['typedir'],'',$this->Fields['namerule2']);
+            $makeFile = str_replace("{page}", $this->PageNo, $makeFile);
+            $murl = $makeFile;
+            if(!preg_match("/^\//", $makeFile))
+            {
+                $makeFile = "/".$makeFile;
+            }
+            $makeFile = $this->GetTruePath().$makeFile;
+            $makeFile = preg_replace("/\/{1,}/", "/", $makeFile);
+            $murl = $this->GetTrueUrl($murl);
+            $this->dtp->SaveTo($makeFile);
+        }
+        if($startpage==1)
+        {
+            //如果列表启用封面文件，复制这个文件第一页
+            if($this->TypeLink->TypeInfos['isdefault']==1
+            && $this->TypeLink->TypeInfos['ispart']==0)
+            {
+                $onlyrule = $this->GetMakeFileRule($this->Fields['id'],"list",$this->Fields['typedir'],'',$this->Fields['namerule2']);
+                $onlyrule = str_replace("{page}","1",$onlyrule);
+                $list_1 = $this->GetTruePath().$onlyrule;
+                $murl = MfTypedir($this->Fields['typedir']).'/'.$this->Fields['defaultname'];
+                $indexname = $this->GetTruePath().$murl;
+                copy($list_1,$indexname);
+            }
+        }
+        return $murl;
+    }
+
+    /**
+     *  解析模板，对固定的标记进行初始给值
+     *
+     * @access    public
+     * @return    string
+     */
+    function ParseTempletsFirst()
+    {
+        // if(isset($this->TypeLink->TypeInfos['reid']))
+        // {
+        //     $GLOBALS['envs']['reid'] = $this->TypeLink->TypeInfos['reid'];
+        // }
+        // $GLOBALS['envs']['typeid'] = $this->TypeID;
+        // $GLOBALS['envs']['topid'] = GetTopid($this->Fields['typeid']);
+        // MakeOneTag($this->dtp,$this);
+    }
+
+    /**
+     *  获得站点的真实根路径
+     *
+     * @access    public
+     * @return    string
+     */
+    function GetTruePath()
+    {
+        $truepath = $GLOBALS["cfg_basedir"];
+        return $truepath;
+    }
+
+    /**
+     *  获得真实连接路径
+     *
+     * @access    public
+     * @param     string  $nurl  地址
+     * @return    string
+     */
+    function GetTrueUrl($nurl)
+    {
+        if($this->Fields['moresite']==1)
+        {
+            if($this->Fields['sitepath']!='')
+            {
+                $nurl = preg_replace("/^".$this->Fields['sitepath']."/", '', $nurl);
+            }
+            $nurl = $this->Fields['siteurl'].$nurl;
+        }
+        return $nurl;
+    }
+
+    /**
+     *  获得要创建的文件名称规则
+     *
+     * @access    public
+     * @param     int  $typeid  栏目ID
+     * @param     string  $wname
+     * @param     string  $typedir  栏目目录
+     * @param     string  $defaultname  默认名称
+     * @param     string  $namerule2  栏目规则
+     * @return    string
+     */
+    function GetMakeFileRule($typeid,$wname,$typedir,$defaultname,$namerule2)
+    {
+        $typedir = MfTypedir($typedir);
+        if($wname=='index')
+        {
+            return $typedir.'/'.$defaultname;
+        }
+        else
+        {
+            $namerule2 = str_replace('{tid}',$typeid,$namerule2);
+            $namerule2 = str_replace('{typedir}',$typedir,$namerule2);
+            return $namerule2;
+        }
+    }
+
 }

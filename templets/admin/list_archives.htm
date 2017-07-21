@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset={sun:global.cfg_soft_lang/}" />
+<title>{sun:field.title/}_{sun:global.cfg_webname/}</title>
+<meta name="keywords" content="{sun:field name='keywords'/}" />
+<meta name="description" content="{sun:field name='description' function='html2text(@me)'/}" />
+<link href="{sun:global.cfg_templets_skin/}/style/suncms.css" rel="stylesheet" media="screen" type="text/css" />
+</head>
+<body class="articlelist">
+<!-- /header -->
+
+<div class="channel-nav w960 center clear">
+	<div class='sonnav'>
+	{sun:channel currentstyle="<span><a href='~typelink~' class='thisclass'>~typename~</a></span>"}
+		<span><a href='[field:typeurl/]'>[field:typename/]</a></span>{/sun:channel}
+	<a href="index.php?ct=admin&ac=forms&to=archives" class="title">新建一条记录</a>
+	</div>
+</div><!-- /channel-nav -->
+
+<div class="w960 center clear mt1">
+	<div class="pleft">
+		<div class="listbox">
+			<ul class="e2">
+			{sun:list pagesize='10'}
+			<li><span>[field:id/]</span>
+			<a href="index.php?ct=admin&ac=record&to=archives&key=[field:id/]" class="title">[field:title/]</a>
+			</li>
+			{/sun:list}
+			</ul>
+		</div><!-- /listbox -->
+		<div class="sun_pages">
+			<ul class="pagelist">
+             {sun:pagelist listitem="info,index,end,pre,next,pageno" pagesize="10"/}
+			</ul>
+		</div><!-- /pages -->
+	</div><!-- /pleft -->
+</div>
+<div id="innerfooterAD" style="margin:10px auto; width:726px">{sun:myad name='innerfooterAD'/}</div>
+<!-- /footer -->
+</body>
+</html>

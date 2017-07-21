@@ -1,161 +1,87 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta name="Generator" content="ECSHOP v2.7.3" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset={sun:global.cfg_soft_lang/}" />
 <title>{sun:field.title/}_{sun:global.cfg_webname/}</title>
-<meta name="keywords" content="{sun:field name='words'/}" />
-<meta name="description" content="{sun:field name='descr' function='html2text(@me)'/}" />
-<link type="text/css" rel="stylesheet" href="{sun:global.cfg_templets_skin/}/css/global.css" />
-<link type="text/css" rel="stylesheet" href="{sun:global.cfg_templets_skin/}/css/1200.css" />
-<link type="text/css" rel="stylesheet" href="{sun:global.cfg_templets_skin/}/css/list.css" />
+<meta name="keywords" content="{sun:field name='keywords'/}" />
+<meta name="description" content="{sun:field name='description' function='html2text(@me)'/}" />
+<link href="{sun:global.cfg_templets_skin/}/style/suncms.css" rel="stylesheet" media="screen" type="text/css" />
 </head>
-<body>
-{sun:include filename="head2.htm"/}
-<div class="main margin pathinfo"><strong>当前位置:</strong> {sun:field name='position'/}</div>
-<div class="main clearfix">
-<div class="mainListLeft fl">
-<div class="listLeftMenu">
-<dl class="on">
-<dt rel="on"><strong><a href="category-1-b0.html">原产地原生态·尚蔬坊</a></strong><span></span></dt>
-<dd class="clearfix"> 
-<span><a href="category-2-b0.html">蔬菜礼盒</a></span> 
-<span><a href="category-3-b0.html">丝瓜</a></span> 
-<span><a href="category-22-b0.html">辣椒</a></span> 
-<span><a href="category-23-b0.html">西红柿</a></span> 
-<span><a href="category-26-b0.html">苦瓜</a></span> 
-<span><a href="category-27-b0.html">茄子</a></span> 
-<span><a href="category-29-b0.html">冬瓜</a></span> 
-<span><a href="category-52-b0.html">黄瓜</a></span> 
-<span><a href="category-53-b0.html">土豆</a></span> 
-</dd>
-</dl>
-<dl class="">
-<dt rel="off"><strong><a href="category-6-b0.html">原产地原生态·集果轩</a></strong><span></span></dt>
-<dd class="clearfix"> 
-<span><a href="category-9-b0.html">麻阳苗族农家板栗</a></span> 
-<span><a href="category-32-b0.html">新疆库尔勒香梨</a></span> 
-<span><a href="category-35-b0.html">烟台红富士</a></span> 
-<span><a href="category-36-b0.html">泸溪富硒椪柑</a></span> 
-</dd>
-</dl>
-<dl class="">
-<dt rel="off"><strong><a href="category-12-b0.html">养生之道·百味斋</a></strong><span></span></dt>
-<dd class="clearfix"> 
-<span><a href="category-38-b0.html">紫鹊贡米·红米</a></span> 
-<span><a href="category-39-b0.html">紫鹊贡米·紫米</a></span> 
-<span><a href="category-54-b0.html">猴头菇</a></span> 
-<span><a href="category-55-b0.html">湘莲</a></span> 
-<span><a href="category-56-b0.html">橘红片</a></span> 
-<span><a href="category-58-b0.html">木耳</a></span> 
-</dd>
-</dl>
-<dl class="">
-<dt rel="off"><strong><a href="category-16-b0.html">健康之道·香茗阁</a></strong><span></span></dt>
-<dd class="clearfix"> 
-<span><a href="category-40-b0.html">狗脑贡茶绿茶</a></span> 
-<span><a href="category-41-b0.html">磬子山古树黑茶</a></span> 
-<span><a href="category-57-b0.html">罗汉果茶</a></span> 
-</dd>
-</dl>
-<dl class="">
-<dt rel="off"><strong><a href="category-17-b0.html">湘之润·伴手礼</a></strong><span></span></dt>
-<dd class="clearfix"> 
-<span><a href="category-42-b0.html">湖湘古韵伴手礼</a></span> 
-<span><a href="category-43-b0.html">宝庆龙牙百合</a></span> 
-<span><a href="category-46-b0.html">五常大米</a></span> 
-<span><a href="category-47-b0.html">狗脑贡茶</a></span> 
-<span><a href="category-48-b0.html">紫鹊贡米</a></span> 
-<span><a href="category-49-b0.html">安化黑茶</a></span> 
-</dd>
-</dl>
-<dl class="">
-<dt rel="off"><strong><a href="category-44-b0.html">美酒庄园</a></strong><span></span></dt>
-<dd class="clearfix"> 
-</dd>
-</dl>
+<body class="articlelist">
+{sun:include filename="head.htm"/}
+<!-- /header -->
 
-</div>
-<div id="history_div" class="hotSell" style="display: block;">
-<h4 id="clear_history"> 最近浏览过的 <a onclick="clear_history()" href="javascript:;" title="清空你的浏览记录">[清空]</a> </h4>
-<div id="history_list">
-<dl><dt><a target="_blank" href="goods-134.html"> <img class="B_blue" src="images/201507/thumb_img/134_thumb_G_1436836923710.jpg"> </a> </dt><dd><p><a target="_blank" href="goods-134.html">柏丽雅城堡甜白葡萄酒 法国原瓶进口正品红酒</a> </p><span>￥679.00</span></dd></dl></div>
-</div>
-</div>
-<div class="mainListRight fr">
-<div class="BestItems clearfix">
-<h4>热销推荐</h4>
-{sun:arclist flag='c' titlelen=38 row=5}
-<dl>
-<dt><a href="[field:arcurl/]" target="_blank" title="[field:title/]">
-<img src="" alt="[field:title/]"></a></dt>
-<dd>
-<p><a href="[field:arcurl/]" target="_blank" title="">[field:title/]</a></p>
-<div class="price_wrap"><strong><span>￥[field:price/]</span></strong><del>￥[field:market/]</del></div>
-<div class="btn_wrap"><a href="[field:arcurl/]" target="_blank" class="btn_buy">购买</a></div>
-</dd>
-</dl>
-{/sun:arclist}
-</div>
-<a name="goods_list"></a>
-<div class="catschoose">
-<dl class="clearfix">
-<dt>按品种</dt>
-<dd> 
-<a class="cur">全部</a>&nbsp;
-</dd>
-</dl>
-<dl class="clearfix last">
-<dt>按价格</dt>
-<dd> 
-<a class="cur">全部</a>&nbsp;
-<a href="category-1-b0-min100-max110-attr0.html">100&nbsp;-&nbsp;110</a>&nbsp;
-</dd>
-</dl>
+<div class="channel-nav w960 center clear">
+	<div class='sonnav'>
+	{sun:channel currentstyle="<span><a href='~typelink~' class='thisclass'>~typename~</a></span>"}
+		<span><a href='[field:typeurl/]'>[field:typename/]</a></span>{/sun:channel}
+	</div>
+</div><!-- /channel-nav -->
 
-</div>
-<div class="mod_order">
-<div class="con_list">
-<a href="category.php?category=1&amp;display=grid&amp;brand=0&amp;price_min=0&amp;price_max=0&amp;filter_attr=0&amp;page=1&amp;sort=salesnum&amp;order=ASC#goods_list" class="Sales_down"></a>
-<a href="category.php?category=1&amp;display=grid&amp;brand=0&amp;price_min=0&amp;price_max=0&amp;filter_attr=0&amp;page=1&amp;sort=commentnum&amp;order=ASC#goods_list" class="status_down"></a>
-<a href="category.php?category=1&amp;display=grid&amp;brand=0&amp;price_min=0&amp;price_max=0&amp;filter_attr=0&amp;page=1&amp;sort=shop_price&amp;order=ASC#goods_list" class="order_up"></a>
-</div>
-<div style="float:right;margin-right:20px;" class="page1">
-<div id="pager" class="pagebar"> <span>1/1</span>  
-<em class="prev">上一页</em>		  <em class="next">下一页</em>		            </div>
-</div>
-</div>
-<div class="ProductList">
-<ul class="clearfix">
-    {sun:list pagesize='8'}
-    <li class="">
-    <div class="productListBox">
-    <div class="listImg">
-    <a href="[field:arcurl/]" target="_blank" title="[field:title/]">
-    <img src="[field:litpic/]" alt="[field:title/]"></a></div>
-    <div class="listWrap"><strong>￥[field:price/]</strong><del>￥[field:market/]</del>
-    </div>
-    <div class="listText"><a href="" target="_blank" title="">[field:title/]</a>
-    </div>
-    <div class="listStar"><span>总销量:<strong>[field:trade/]</strong></span>
-    </div>
-    <div class="listWrapBtn">
-    <a href="javascript:addToCart([field:id/])" class="wrapBtn1">放入购物车</a>
-    <a href="[field:arcurl/]" target="_blank" class="wrapBtn2">购买</a></div>
-    </div>
-    </li>
-    </li>
-    {/sun:list}
-</ul>
-<div class="page">
-    <ul class="pagelist">
-    {sun:pagelist listitem="info,index,end,pre,next,pageno,option" listsize="5"/}
-    </ul>
-</div>
-</div>
-</div>
-</div>
+<div class="w960 center clear mt1">
+	<div class="pleft">
+		<div class="place">
+			<strong>当前位置:</strong> {sun:field name='position'/}
+		</div><!-- /place -->
+		<div class="listbox">
+			<ul class="e2">
+{sun:list pagesize='10'}
+				<li>
+      				[field:array runphp='yes']@me = (empty(@me['litpic']) ? "" : "<a href='{@me['arcurl']}' class='preview'><img src='{@me['litpic']}'/></a>"); [/field:array]
+					<a href="[field:arcurl/]" class="title">[field:title/]</a>
+					<span class="info">
+						<small>日期：</small>[field:pubdate function="GetDateTimeMK(@me)"/]
+						<small>点击：</small>[field:click/]
+						<small>好评：</small>[field:scores/]
+					</span>
+					<p class="intro">
+						[field:description/]...
+					</p>
+				</li>
+{/sun:list}
+			</ul>
+		</div><!-- /listbox -->
+		<div class="sun_pages">
+			<ul class="pagelist">
+             {sun:pagelist listitem="info,index,end,pre,next,pageno" listsize="5"/}
+			</ul>
+		</div><!-- /pages -->
+	</div><!-- /pleft -->
+	
+	<div class="pright">
+		<div class="commend">
+			<dl class="tbox">
+				<dt><strong>推荐内容</strong></dt>
+				<dd>
+					<ul class="d4">
+           {sun:arclist flag='c' titlelen=42 row=6}
+          	<li><a href="[field:arcurl/]">[field:title/]</a>
+            	<p>[field:description function='cn_substr(@me,80)'/]...</p>
+            </li>{/sun:arclist}
+					</ul>
+				</dd>
+			</dl>
+		</div><!-- /commend -->
+		<div id="listRtPicAD" style="margin:10px auto">{sun:myad name='listRtPicAD'/}</div>
+		<div class="hot mt1">
+			<dl class="tbox">
+				<dt><strong>热点内容</strong></dt>
+				<dd>
+					<ul class="c1 ico2">
+                    {sun:arclist row=10 orderby=click}
+                    	<li><a href="[field:arcurl/]">[field:title/]</a></li>
+                    {/sun:arclist}
+					</ul>
+				</dd>
+			</dl>
+		</div>
+        <div id="listRtPicAD2" style="margin:10px auto">{sun:myad name='listRtPicAD2'/}</div>
 
+	</div><!-- /pright -->
+</div>
+<div id="innerfooterAD" style="margin:10px auto; width:726px">{sun:myad name='innerfooterAD'/}</div>
 {sun:include filename="footer.htm"/}
+<!-- /footer -->
+
 </body>
 </html>

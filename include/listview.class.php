@@ -1,8 +1,23 @@
 <?php   if(!defined('SUNINC')) exit('Request Error!');
-
+/**
+ * 文档列表类
+ *
+ * @version        $Id: listview.class.php 2 15:15 2010年7月7日Z tianya $
+ * @package        SunCMS.Libraries
+ * @copyright      Copyright (c) 2016 - , Inc.
+ */
+require_once(SUNINC.'/partview.class.php');
 require_once(SUNINC."/suntag.class.php");
 
+helper('cache');
+@set_time_limit(0);
 
+/**
+ * 自由列表类
+ *
+ * @package          ListView
+ * @subpackage       SunCMS.Libraries
+ */
 class ListView
 {
     var $dsql;
@@ -17,28 +32,59 @@ class ListView
     var $templets;
     var $ListType;
     var $Fields;
+    var $PartView;
     var $upPageType;
     var $addSql;
     var $IsError;
     var $CrossID;
     var $IsReplace;
     
+    /**
+     *  php5构造函数
+     *
+     * @access    public
+     * @param     int  $typeid  栏目ID
+     * @param     int  $uppage  上一页
+     * @return    string
+     */
     function __construct($typeid, $uppage=1)
     {
         global $dsql,$ftp;
 
         $this->TypeID = $typeid;
         $this->dsql = &$dsql;
+        $this->CrossID = '';
         $this->IsReplace = false;
         $this->IsError = false;
         $this->dtp = new SunTagParse();
+
         $this->dtp->SetRefObj($this);
         $this->dtp->SetNameSpace("sun", "{", "}");
-        $this->dtp2 = new SunTagParse();            
+        $this->dtp2 = new SunTagParse();			
         $this->dtp2->SetNameSpace("field","[","]");
+        $this->TypeLink = new TypeLink($typeid);
         $this->upPageType = $uppage;
         $this->TotalResult = is_numeric($this->TotalResult)? $this->TotalResult : "";
         
+        if(!is_array($this->TypeLink->TypeInfos))
+        {
+            $this->IsError = true;
+        }
+        if(!$this->IsError)
+        {		
+            //$this->ChannelUnit = new ChannelUnit($this->TypeLink->TypeInfos['channeltype']);
+            $this->Fields = $this->TypeLink->TypeInfos;
+            $this->Fields['id'] = $typeid;
+            $this->Fields['position'] = $this->TypeLink->GetPositionLink(true);
+            $this->Fields['title'] = preg_replace("/[<>]/", " / ", $this->TypeLink->GetPositionLink(false));	
+            //设置一些全局参数的值
+            foreach($GLOBALS['PubFields'] as $k=>$v) $this->Fields[$k] = $v;
+
+            //设置环境变量
+            SetSysEnv($this->TypeID,$this->Fields['typename'],0,'','list');
+            $this->Fields['typeid'] = $this->TypeID;	
+        }//!error
+
     }
 
     //php4构造函数
@@ -52,26 +98,37 @@ class ListView
 
     }
 
+    /**
+     *  统计列表里的记录
+     *
+     * @access    public
+     * @param     string
+     * @return    string
+     */
     function CountRecord()
     {
         global $cfg_list_son,$cfg_need_typeid2,$cfg_cross_sectypeid;
+        if(empty($cfg_need_typeid2)) $cfg_need_typeid2 = 'N';
         //统计数据库记录
         $this->TotalResult = -1;
         if(isset($GLOBALS['TotalResult'])) $this->TotalResult = $GLOBALS['TotalResult'];
         if(isset($GLOBALS['PageNo'])) $this->PageNo = $GLOBALS['PageNo'];
         else $this->PageNo = 1;
+        $this->addSql  = " arc.arcrank > -1 ";
 
-        //$sonids = GetSonIds($this->TypeID,$this->Fields['channeltype']);
-        $sonids = GetSonIds($this->TypeID); 
-        if(!preg_match("/,/", $sonids)) {
-            $sonidsCon = " arc.typeid = '$sonids' ";
-        }
-        else {
-            $sonidsCon = " arc.typeid IN($sonids) ";
-        }
+		$sonids = GetSonIds($this->TypeID);			
+		if(!preg_match("/,/", $sonids)) {
+			$sonidsCon = " arc.typeid = '$sonids' ";
+		}
+		else {
+			$sonidsCon = " arc.typeid IN ($sonids) ";
+		}
+	
         if($this->TotalResult==-1)
         {
-            $cquery = "SELECT COUNT(*) AS dd FROM `#@__archives` arc WHERE ".$sonidsCon;
+            //$cquery = "SELECT COUNT(*) AS dd FROM `#@__arctiny` arc WHERE ".$this->addSql;
+			//$cquery = "SELECT COUNT(*) AS dd FROM `#@__arctiny` arc ";
+			$cquery = "SELECT COUNT(*) AS dd FROM `#@__archives` arc WHERE ".$sonidsCon;
             $row = $this->dsql->GetOne($cquery);
             if(is_array($row))
             {
@@ -82,23 +139,24 @@ class ListView
                 $this->TotalResult = 0;
             }
         }
+
         //初始化列表模板，并统计页面总数
-        //$tempfile = $GLOBALS['cfg_basedir'].$GLOBALS['cfg_templets_dir'];
-        //$tempfile = str_replace("{tid}", $this->TypeID, $tempfile);
-        //$tempfile = str_replace("{cid}", 'article', $tempfile);
-        /*
+        $tempfile = $GLOBALS['cfg_basedir'].$GLOBALS['cfg_templets_dir']."/".$this->TypeLink->TypeInfos['templist'];
+        $tempfile = str_replace("{tid}", $this->TypeID, $tempfile);
+
+        //$tempfile = str_replace("{cid}", $this->ChannelUnit->ChannelInfos['nid'], $tempfile);article
+		//$tempfile = str_replace("{cid}", 'article', $tempfile);
+		
         if(!file_exists($tempfile))
-        {       
-            $tempfile = $GLOBALS['cfg_basedir'].$GLOBALS['cfg_templets_dir']."/list.htm";
-        }*/
-        // $tmpdir = $GLOBALS['cfg_basedir'].$GLOBALS['cfg_templets_dir'];
-
-
-        $tempfile = SUNTPL."/default/archives_list.htm";
-        echo $tempfile;
+        {		
+            $tempfile =$GLOBALS['cfg_templets_dir']."/".$GLOBALS['cfg_df_style']."/list_default.htm";
+        }
+		$this->templets=$tempfile;
+		
+        echo 'tempfile is:'.$tempfile;
         if(!file_exists($tempfile)||!is_file($tempfile))
         {
-            echo "模板文件不存在，无法解析文档！";
+            echo "模板文件不存在，我无法解析文档！";
             exit();
         }
         $this->dtp->LoadTemplate($tempfile);
@@ -122,39 +180,274 @@ class ListView
                 $this->PageSize = 20;
             }
         }
-        $this->TotalPage = ceil($this->TotalResult/$this->PageSize); 
+        $this->TotalPage = ceil($this->TotalResult/$this->PageSize);
     }
 
+    /**
+     *  列表创建HTML
+     *
+     * @access    public
+     * @param     string  $startpage  开始页面
+     * @param     string  $makepagesize  创建文件数目
+     * @param     string  $isremote  是否为远程
+     * @return    string
+     */
+    function MakeHtml($startpage=1, $makepagesize=0, $isremote=0)
+    {
+        global $cfg_remote_site;
+        if(empty($startpage))
+        {
+            $startpage = 1;
+        }
+
+        //创建封面模板文件
+        if($this->TypeLink->TypeInfos['isdefault']==-1)
+        {
+            echo '这个类目是动态类目！';
+            return '../plus/list.php?tid='.$this->TypeLink->TypeInfos['id'];
+        }
+
+        //单独页面
+        else if($this->TypeLink->TypeInfos['ispart']>0)
+        {
+            $reurl = $this->MakePartTemplets();
+            return $reurl;
+        }
+
+        $this->CountRecord();
+        //初步给固定值的标记赋值
+        $this->ParseTempletsFirst();
+        $totalpage = ceil($this->TotalResult/$this->PageSize);
+        if($totalpage==0)
+        {
+            $totalpage = 1;
+        }
+        echo '<br>typedir is:'.MfTypedir($this->Fields['typedir']);
+        CreateDir(MfTypedir($this->Fields['typedir']));
+        $murl = '';
+        if($makepagesize > 0)
+        {
+            $endpage = $startpage+$makepagesize;
+        }
+        else
+        {
+            $endpage = ($totalpage+1);
+        }
+        if( $endpage >= $totalpage+1 )
+        {
+            $endpage = $totalpage+1;
+        }
+        if($endpage==1)
+        {
+            $endpage = 2;
+        }
+        for($this->PageNo=$startpage; $this->PageNo < $endpage; $this->PageNo++)
+        {
+            $this->ParseDMFields($this->PageNo,1);
+            $makeFile = $this->GetMakeFileRule($this->Fields['id'],'list',$this->Fields['typedir'],'',$this->Fields['namerule2']);
+            $makeFile = str_replace("{page}", $this->PageNo, $makeFile);
+            $murl = $makeFile;
+            if(!preg_match("/^\//", $makeFile))
+            {
+                $makeFile = "/".$makeFile;
+            }
+            $makeFile = $this->GetTruePath().$makeFile;
+            $makeFile = preg_replace("/\/{1,}/", "/", $makeFile);
+            $murl = $this->GetTrueUrl($murl);
+            $this->dtp->SaveTo($makeFile);
+        }
+        if($startpage==1)
+        {
+            //如果列表启用封面文件，复制这个文件第一页
+            if($this->TypeLink->TypeInfos['isdefault']==1
+            && $this->TypeLink->TypeInfos['ispart']==0)
+            {
+                $onlyrule = $this->GetMakeFileRule($this->Fields['id'],"list",$this->Fields['typedir'],'',$this->Fields['namerule2']);
+                $onlyrule = str_replace("{page}","1",$onlyrule);
+                $list_1 = $this->GetTruePath().$onlyrule;
+                $murl = MfTypedir($this->Fields['typedir']).'/'.$this->Fields['defaultname'];
+                $indexname = $this->GetTruePath().$murl;
+                copy($list_1,$indexname);
+            }
+        }
+        return $murl;
+    }
+
+    /**
+     *  显示列表
+     *
+     * @access    public
+     * @return    void
+     */
     function Display()
     {
-        $tmpdir = $GLOBALS['cfg_basedir'].$GLOBALS['cfg_templets_dir'];
-        $tempfile = str_replace("{tid}",$this->TypeID,$this->Fields['tempindex']);
-        $tempfile = str_replace("{cid}",$this->ChannelUnit->ChannelInfos['nid'],$tempfile);
-        $tempfile = $tmpdir."/".$tempfile;
-        print_r($this->Fields);
-        echo 'tempfile = '.$tempfile;
-        // $tempfile = SUNTPL."/default/archives_list.htm";
+        if($this->TypeLink->TypeInfos['ispart']>0)
+        {
+            $this->DisplayPartTemplets();
+            return ;
+        }
         $this->CountRecord();
-        $this->dtp->LoadTemplate($tempfile);
-        // foreach ($this->dtp->CTags as $key => $value) {
-        //     echo $key;
-        //     var_dump($value);   
-        // }
-        //$this->ParseTempletsFirst();
+        if(empty($this->PageNo) || $this->PageNo==1)
+        {
+            $tmpdir = $GLOBALS['cfg_basedir'].$GLOBALS['cfg_templets_dir'];
+            $tempfile = str_replace("{tid}",$this->TypeID,$this->Fields['tempindex']);
+            $tempfile = $tmpdir."/".$tempfile;
+            $this->dtp->LoadTemplate($tempfile);
+        }
+        $this->ParseTempletsFirst();
         $this->ParseDMFields($this->PageNo,0);
         $this->dtp->Display();
-        
     }
 
+    /**
+     *  创建单独模板页面
+     *
+     * @access    public
+     * @return    string
+     */
+    function MakePartTemplets()
+    {
+        $this->PartView = new PartView($this->TypeID,false);
+        $this->PartView->SetTypeLink($this->TypeLink);
+        $tmpdir = $GLOBALS['cfg_basedir'].$GLOBALS['cfg_templets_dir'];
+        if($this->Fields['ispart']==1)
+        {
+            $tempfile = str_replace("{tid}",$this->TypeID,$this->Fields['tempindex']);
+            $tempfile = $tmpdir."/".$tempfile;
+            $this->PartView->SetTemplet($tempfile);
+        }
+        else if($this->Fields['ispart']==2)
+        {
+            //跳转网址
+            return $this->Fields['typedir'];
+        }
+        CreateDir(MfTypedir($this->Fields['typedir']));
+        $makeUrl = $this->GetMakeFileRule($this->Fields['id'],"index",MfTypedir($this->Fields['typedir']),$this->Fields['defaultname'],$this->Fields['namerule2']);
+        $makeUrl = preg_replace("/\/{1,}/", "/", $makeUrl);
+        $makeFile = $this->GetTruePath().$makeUrl;
+		$this->PartView->SaveToHtml($makeFile);
+        return $this->GetTrueUrl($makeUrl);
+    }
+
+    /**
+     *  显示单独模板页面
+     *
+     * @access    public
+     * @param     string
+     * @return    string
+     */
+    function DisplayPartTemplets()
+    {
+        $this->PartView = new PartView($this->TypeID,false);
+        $this->PartView->SetTypeLink($this->TypeLink);
+        $tmpdir = $GLOBALS['cfg_basedir'].$GLOBALS['cfg_templets_dir'];
+        if($this->Fields['ispart']==1)
+        {
+            //封面模板
+            $tempfile = str_replace("{tid}",$this->TypeID,$this->Fields['tempindex']);
+            $tempfile = $tmpdir."/".$tempfile;
+
+            $this->PartView->SetTemplet($tempfile);
+        }
+        else if($this->Fields['ispart']==2)
+        {
+            //跳转网址
+            $gotourl = $this->Fields['typedir'];
+            header("Location:$gotourl");
+            exit();
+        }
+        CreateDir(MfTypedir($this->Fields['typedir']));
+        $makeUrl = $this->GetMakeFileRule($this->Fields['id'],"index",MfTypedir($this->Fields['typedir']),$this->Fields['defaultname'],$this->Fields['namerule2']);
+        $makeFile = $this->GetTruePath().$makeUrl;
+		if(!file_exists($makeFile))
+		{
+			$this->PartView->Display();
+		}
+		else
+		{
+			include($makeFile);
+		}
+    }
+
+    /**
+     *  获得站点的真实根路径
+     *
+     * @access    public
+     * @return    string
+     */
+    function GetTruePath()
+    {
+        $truepath = $GLOBALS["cfg_basedir"];
+        return $truepath;
+    }
+
+    /**
+     *  获得真实连接路径
+     *
+     * @access    public
+     * @param     string  $nurl  地址
+     * @return    string
+     */
+    function GetTrueUrl($nurl)
+    {
+        if($this->Fields['moresite']==1)
+        {
+            if($this->Fields['sitepath']!='')
+            {
+                $nurl = preg_replace("/^".$this->Fields['sitepath']."/", '', $nurl);
+            }
+            $nurl = $this->Fields['siteurl'].$nurl;
+        }
+        return $nurl;
+    }
+
+    /**
+     *  解析模板，对固定的标记进行初始给值
+     *
+     * @access    public
+     * @return    string
+     */
+    function ParseTempletsFirst()
+    {
+        if(isset($this->TypeLink->TypeInfos['reid']))
+        {
+            $GLOBALS['envs']['reid'] = $this->TypeLink->TypeInfos['reid'];
+        }
+        $GLOBALS['envs']['typeid'] = $this->TypeID;
+        $GLOBALS['envs']['topid'] = GetTopid($this->Fields['typeid']);
+        MakeOneTag($this->dtp,$this);
+    }
+
+    /**
+     *  解析模板，对内容里的变动进行赋值
+     *
+     * @access    public
+     * @param     int  $PageNo  页数
+     * @param     int  $ismake  是否编译
+     * @return    string
+     */
     function ParseDMFields($PageNo,$ismake=1)
     {
+        //替换第二页后的内容
+        if(($PageNo>1 || strlen($this->Fields['content'])<10 ) && !$this->IsReplace)
+        {
+            $this->dtp->SourceString = str_replace('[cmsreplace]','display:none',$this->dtp->SourceString);
+            $this->IsReplace = true;
+        }
         foreach($this->dtp->CTags as $tagid=>$ctag)
         {
             if($ctag->GetName()=="list")
             {
                 $limitstart = ($this->PageNo-1) * $this->PageSize;
                 $row = $this->PageSize;
-                $InnerText = trim($ctag->GetInnerText());
+                if(trim($ctag->GetInnerText())=="")
+                {
+                    $InnerText = GetSysTemplets("list_fulllist.htm");
+                }
+                else
+                {
+                    $InnerText = trim($ctag->GetInnerText());
+                }
                 $this->dtp->Assign($tagid,
                 $this->GetArcList(
                 $limitstart,
@@ -177,7 +470,18 @@ class ListView
             {
                 $list_len = trim($ctag->GetAtt("listsize"));
                 $ctag->GetAtt("listitem")=="" ? $listitem="index,pre,pageno,next,end,option" : $listitem=$ctag->GetAtt("listitem");
-                $this->dtp->Assign($tagid,$this->GetPageListDM($list_len,$listitem));
+                if($list_len=="")
+                {
+                    $list_len = 3;
+                }
+                if($ismake==0)
+                {
+                    $this->dtp->Assign($tagid,$this->GetPageListDM($list_len,$listitem));
+                }
+                else
+                {
+                    $this->dtp->Assign($tagid,$this->GetPageListST($list_len,$listitem));
+                }
             }
             else if($PageNo!=1 && $ctag->GetName()=='field' && $ctag->GetAtt('display')!='')
             {
@@ -186,12 +490,58 @@ class ListView
         }
     }
 
+    /**
+     *  获得要创建的文件名称规则
+     *
+     * @access    public
+     * @param     int  $typeid  栏目ID
+     * @param     string  $wname
+     * @param     string  $typedir  栏目目录
+     * @param     string  $defaultname  默认名称
+     * @param     string  $namerule2  栏目规则
+     * @return    string
+     */
+    function GetMakeFileRule($typeid,$wname,$typedir,$defaultname,$namerule2)
+    {
+        $typedir = MfTypedir($typedir);
+        if($wname=='index')
+        {
+            return $typedir.'/'.$defaultname;
+        }
+        else
+        {
+            $namerule2 = str_replace('{tid}',$typeid,$namerule2);
+            $namerule2 = str_replace('{typedir}',$typedir,$namerule2);
+            return $namerule2;
+        }
+    }
+
+    /**
+     *  获得一个单列的文档列表
+     *
+     * @access    public
+     * @param     int  $limitstart  限制开始  
+     * @param     int  $row  行数 
+     * @param     int  $col  列数
+     * @param     int  $titlelen  标题长度
+     * @param     int  $infolen  描述长度
+     * @param     int  $imgwidth  图片宽度
+     * @param     int  $imgheight  图片高度
+     * @param     string  $listtype  列表类型
+     * @param     string  $orderby  排列顺序
+     * @param     string  $innertext  底层模板
+     * @param     string  $tablewidth  表格宽度
+     * @param     string  $ismake  是否编译
+     * @param     string  $orderWay  排序方式
+     * @return    string
+     */
     function GetArcList($limitstart=0,$row=10,$col=1,$titlelen=30,$infolen=250,
     $imgwidth=120,$imgheight=90,$listtype="all",$orderby="default",$innertext="",$tablewidth="100",$ismake=1,$orderWay='desc')
     {
         global $cfg_list_son,$cfg_digg_update;
         
         $typeid=$this->TypeID;
+        
         if($row=='') $row = 10;
         if($limitstart=='') $limitstart = 0;
         if($titlelen=='') $titlelen = 100;
@@ -216,20 +566,47 @@ class ListView
         $colWidth = $colWidth.'%';
         
         $innertext = trim($innertext);
+        if($innertext=='') {
+            $innertext = GetSysTemplets('list_fulllist.htm');
+        }
 
-
+		$sonids = GetSonIds($this->TypeID);			
+		if(!preg_match("/,/", $sonids)) {
+			$sonidsCon = " arc.typeid = '$sonids' ";
+		}
+		else {
+			$sonidsCon = " arc.typeid IN ($sonids) ";
+		}
+		
         //排序方式
         $ordersql = '';
-        $sonids = GetSonIds($this->TypeID); 
-        if(!preg_match("/,/", $sonids)) {
-            $sonidsCon = " arc.typeid = '$sonids' ";
+		/*
+        if($orderby=="senddate" || $orderby=="id") {
+            $ordersql=" ORDER BY arc.id $orderWay";
+        }
+        else if($orderby=="hot" || $orderby=="click") {
+            $ordersql = " ORDER BY arc.click $orderWay";
+        }
+        else if($orderby=="lastpost") {
+            $ordersql = "  ORDER BY arc.lastpost $orderWay";
         }
         else {
-            $sonidsCon = " arc.typeid IN($sonids) ";
+            $ordersql=" ORDER BY arc.sortrank $orderWay";
         }
-        $query = "SELECT *  FROM `#@__archives` arc WHERE $sonidsCon $ordersql LIMIT $limitstart,$row";
+		*/
+        //如果不用默认的sortrank或id排序，使用联合查询（数据量大时非常缓慢）
+		/*
+        if(preg_match('/hot|click|lastpost/', $orderby))
+        {
+            $query = "SELECT arc.* FROM `#@__archives` arc $ordersql LIMIT $limitstart,$row";
+        }
+		*/
+		
+		$query = "SELECT arc.*,tp.namerule,tp.namerule2,tp.isdefault,tp.defaultname,tp.typedir FROM `#@__archives` arc  
+		LEFT JOIN `#@__arctype` tp ON arc.typeid=tp.id WHERE $sonidsCon $ordersql LIMIT $limitstart,$row";
         $this->dsql->SetQuery($query);
         $this->dsql->Execute('al');
+        $t2 = ExecTime();
 
         $artlist = '';
         $this->dtp2->LoadSource($innertext);
@@ -245,31 +622,74 @@ class ListView
                 if($row = $this->dsql->GetArray("al"))
                 {
                     $GLOBALS['autoindex']++;
+                    $ids[$row['id']] = $row['id'];
+
+                    //处理一些特殊字段
+                    $row['infos'] = cn_substr($row['descr'],$infolen);
+                    $row['id'] =  $row['id'];
+					if($cfg_digg_update > 0)
+					{
+						$prefix = 'diggCache';
+						$key = 'aid-'.$row['id'];
+						$cacherow = GetCache($prefix, $key);
+						$row['goodpost'] = $cacherow['goodpost'];
+						$row['badpost'] = $cacherow['badpost'];
+						$row['scores'] = $cacherow['scores'];
+					}
+
+                    if($row['corank'] > 0 && $row['arcrank']==0)
+                    {
+                        $row['arcrank'] = $row['corank'];
+                    }
+                    $row['filename'] = $row['arcurl'] = GetFileUrl($row['id'],$row['typeid'],$row['senddate'],$row['title'],$row['namerule'],$row['typedir'],$row['filename']);
+					$row['typeurl'] = GetTypeUrl($row['typeid'],MfTypedir($row['typedir']),$row['isdefault'],$row['defaultname'],$row['namerule2'],$row['siteurl']); 					
                     if($row['litpic'] == '-' || $row['litpic'] == '')
                     {
                         $row['litpic'] = $GLOBALS['cfg_cmspath'].'/images/defaultpic.gif';
                     }
-                    if(!preg_match("/^http:\/\//i", $row['litpic']))
+                    if(!preg_match("/^http:\/\//i", $row['litpic']) && $GLOBALS['cfg_multi_site'] == 'Y')
                     {
-                        $row['litpic'] = $GLOBALS['cfg_cmspath'].$GLOBALS['cfg_mediasurl'].'/'.$row['litpic'];
+                        $row['litpic'] = $GLOBALS['cfg_mainsite'].$row['litpic'];
+                    }
+                    $row['picname'] = $row['litpic'];
+                    $row['stime'] = GetDateMK($row['pubdate']);
+                    $row['typelink'] = "<a href='".$row['typeurl']."'>".$row['typename']."</a>";
+                    $row['image'] = "<img src='".$row['picname']."' border='0' width='$imgwidth' height='$imgheight' alt='".preg_replace("/['><]/", "", $row['title'])."'>";
+                    $row['imglink'] = "<a href='".$row['filename']."'>".$row['image']."</a>";
+                    $row['fulltitle'] = $row['title'];
+                    $row['title'] = cn_substr($row['title'],$titlelen);
+                    if($row['color']!='')
+                    {
+                        $row['title'] = "<font color='".$row['color']."'>".$row['title']."</font>";
                     }
                     if(preg_match('/c/', $row['flag']))
                     {
                         $row['title'] = "<b>".$row['title']."</b>";
                     }
+                    $row['textlink'] = "<a href='".$row['filename']."'>".$row['title']."</a>";
+                    $row['plusurl'] = $row['phpurl'] = $GLOBALS['cfg_phpurl'];
+                    $row['memberurl'] = $GLOBALS['cfg_memberurl'];
+                    $row['templeturl'] = $GLOBALS['cfg_templeturl'];
 
-                    //编译附加表里的数据
                     if(is_array($this->dtp2->CTags))
                     {
                         foreach($this->dtp2->CTags as $k=>$ctag)
-                        {
-                            if(isset($row[$ctag->GetName()]))
+                        {						
+                            if($ctag->GetName()=='array')
                             {
-                                $this->dtp2->Assign($k,$row[$ctag->GetName()]);
+                                //传递整个数组，在runphp模式中有特殊作用
+                                $this->dtp2->Assign($k,$row);
                             }
                             else
                             {
-                                $this->dtp2->Assign($k,'');
+                                if(isset($row[$ctag->GetName()]))
+                                {
+                                    $this->dtp2->Assign($k,$row[$ctag->GetName()]);
+                                }
+                                else
+                                {
+                                    $this->dtp2->Assign($k,'');
+                                }
                             }
                         }
                     }
@@ -284,12 +704,137 @@ class ListView
                 $artlist .= "    </div>\r\n";
             }
         }//Loop Line
-        echo $artlist;
-        //$this->dsql->FreeResult('al');
+        $this->dsql->FreeResult('al');
         return $artlist;
     }
 
-    function GetPageListDM($list_len=3,$listitem="index,end,pre,next,pageno")
+    /**
+     *  获取静态的分页列表
+     *
+     * @access    public
+     * @param     string  $list_len  列表宽度
+     * @param     string  $list_len  列表样式
+     * @return    string
+     */
+    function GetPageListST($list_len,$listitem="index,end,pre,next,pageno")
+    {
+        $prepage = $nextpage = '';
+        $prepagenum = $this->PageNo-1;
+        $nextpagenum = $this->PageNo+1;
+        if($list_len=='' || preg_match("/[^0-9]/", $list_len))
+        {
+            $list_len=3;
+        }
+        $totalpage = ceil($this->TotalResult/$this->PageSize);
+        if($totalpage<=1 && $this->TotalResult>0)
+        {
+
+            return "<li><span class=\"pageinfo\">共 <strong>1</strong>页<strong>".$this->TotalResult."</strong>条记录</span></li>\r\n";
+        }
+        if($this->TotalResult == 0)
+        {
+            return "<li><span class=\"pageinfo\">共 <strong>0</strong>页<strong>".$this->TotalResult."</strong>条记录</span></li>\r\n";
+        }
+        $purl = $this->GetCurUrl();
+        $maininfo = "<li><span class=\"pageinfo\">共 <strong>{$totalpage}</strong>页<strong>".$this->TotalResult."</strong>条</span></li>\r\n";
+        $tnamerule = $this->GetMakeFileRule($this->Fields['id'],"list",$this->Fields['typedir'],$this->Fields['defaultname'],$this->Fields['namerule2']);
+        $tnamerule = preg_replace("/^(.*)\//", '', $tnamerule);
+
+        //获得上一页和主页的链接
+        if($this->PageNo != 1)
+        {
+            $prepage.="<li><a href='".str_replace("{page}",$prepagenum,$tnamerule)."'>上一页</a></li>\r\n";
+            $indexpage="<li><a href='".str_replace("{page}",1,$tnamerule)."'>首页</a></li>\r\n";
+        }
+        else
+        {
+            $indexpage="<li>首页</li>\r\n";
+        }
+
+        //下一页,未页的链接
+        if($this->PageNo!=$totalpage && $totalpage>1)
+        {
+            $nextpage.="<li><a href='".str_replace("{page}",$nextpagenum,$tnamerule)."'>下一页</a></li>\r\n";
+            $endpage="<li><a href='".str_replace("{page}",$totalpage,$tnamerule)."'>末页</a></li>\r\n";
+        }
+        else
+        {
+            $endpage="<li>末页</li>\r\n";
+        }
+
+        //option链接
+        $optionlist = '';
+
+        $optionlen = strlen($totalpage);
+        $optionlen = $optionlen*12 + 18;
+        if($optionlen < 36) $optionlen = 36;
+        if($optionlen > 100) $optionlen = 100;
+        $optionlist = "<li><select name='sldd' style='width:{$optionlen}px' onchange='location.href=this.options[this.selectedIndex].value;'>\r\n";
+        for($mjj=1;$mjj<=$totalpage;$mjj++)
+        {
+            if($mjj==$this->PageNo)
+            {
+                $optionlist .= "<option value='".str_replace("{page}",$mjj,$tnamerule)."' selected>$mjj</option>\r\n";
+            }
+            else
+            {
+                $optionlist .= "<option value='".str_replace("{page}",$mjj,$tnamerule)."'>$mjj</option>\r\n";
+            }
+        }
+        $optionlist .= "</select></li>\r\n";
+
+        //获得数字链接
+        $listdd="";
+        $total_list = $list_len * 2 + 1;
+        if($this->PageNo >= $total_list)
+        {
+            $j = $this->PageNo-$list_len;
+            $total_list = $this->PageNo+$list_len;
+            if($total_list>$totalpage)
+            {
+                $total_list=$totalpage;
+            }
+        }
+        else
+        {
+            $j=1;
+            if($total_list>$totalpage)
+            {
+                $total_list=$totalpage;
+            }
+        }
+        for($j;$j<=$total_list;$j++)
+        {
+            if($j==$this->PageNo)
+            {
+                $listdd.= "<li class=\"thisclass\">$j</li>\r\n";
+            }
+            else
+            {
+                $listdd.="<li><a href='".str_replace("{page}",$j,$tnamerule)."'>".$j."</a></li>\r\n";
+            }
+        }
+        $plist = '';
+        if(preg_match('/index/i', $listitem)) $plist .= $indexpage;
+        if(preg_match('/pre/i', $listitem)) $plist .= $prepage;
+        if(preg_match('/pageno/i', $listitem)) $plist .= $listdd;
+        if(preg_match('/next/i', $listitem)) $plist .= $nextpage;
+        if(preg_match('/end/i', $listitem)) $plist .= $endpage;
+        if(preg_match('/option/i', $listitem)) $plist .= $optionlist;
+        if(preg_match('/info/i', $listitem)) $plist .= $maininfo;
+        
+        return $plist;
+    }
+
+    /**
+     *  获取动态的分页列表
+     *
+     * @access    public
+     * @param     string  $list_len  列表宽度
+     * @param     string  $list_len  列表样式
+     * @return    string
+     */
+    function GetPageListDM($list_len,$listitem="index,end,pre,next,pageno")
     {
         global $cfg_rewrite;
         $prepage = $nextpage = '';
@@ -386,9 +931,21 @@ class ListView
         if(preg_match('/option/i', $listitem)) $plist .= $optionlist;
         if(preg_match('/info/i', $listitem)) $plist .= $maininfo;
         
+        if($cfg_rewrite == 'Y')
+        {
+            $plist = str_replace('.php?tid=', '-', $plist);
+            $plist = str_replace('&TotalResult=', '-', $plist);
+            $plist = preg_replace("/&PageNo=(\d+)/i",'-\\1.html',$plist);
+        }
         return $plist;
     }
 
+    /**
+     *  获得当前的页面文件的url
+     *
+     * @access    public
+     * @return    string
+     */
     function GetCurUrl()
     {
         if(!empty($_SERVER['REQUEST_URI']))
@@ -403,5 +960,4 @@ class ListView
         }
         return $nowurl;
     }
-/**/
-}
+}//End Class

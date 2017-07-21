@@ -1032,7 +1032,7 @@ class SunTagParse
         //编译
         if($ismake!="no")
         {
-            require_once(SUNINC."/channel.func.php");
+            require_once(SUNINC."/channelunit.func.php");
             $dtp = new SunTagParse();
             $dtp->LoadTemplet($okfile);
             MakeOneTag($dtp,$this->refObj);

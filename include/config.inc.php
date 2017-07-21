@@ -5,6 +5,8 @@
  * @copyright      Copyright (c) 2016 - , Inc.
  */
 define('DEBUG', TRUE);
+define('DEBUG_LEVEL', false);
+
 // 报错级别设定,一般在开发环境中用E_ALL,这样能够看到所有错误提示
 // 系统正常运行后,直接设定为E_ALL || ~E_NOTICE,取消错误显示
 if(DEBUG){
@@ -27,18 +29,22 @@ define('CACHE', SUNROOT.'/data/tplcache');
 $cfg_df_style = "default";
 $cfg_templets_dir = SUNTPL;
 $cfg_tplcache_dir = CACHE;
+
 //other
 
 $cfg_lang = 'utf8';
 $cfg_site = $_SERVER["HTTP_HOST"];
-$cfg_basehost = $cfg_site;
+$cfg_basehost = 'http://'.$cfg_site;
 $cfg_cmspath= str_replace($_SERVER["DOCUMENT_ROOT"], '', SUNROOT);
 $cfg_api ='http://api.xx.com';
-$cfg_basedir=$cfg_basehost.$cfg_cmspath;
+$cfg_basedir=$cfg_cmspath;
 $cfg_mediasurl='/static/upload';
 $app_url = '/index.html?page=';
 
+$cfg_basedir=SUNROOT;
 
+$cfg_list_symbol='>>';
+$cfg_multi_site = 'Y';
 
 $cfg_cookie = 'G_N_T_K';
 $cookie_encode = 'Genetalks';
@@ -78,7 +84,7 @@ if(file_exists(DATA.'/helper.inc.php'))
     // 若没有载入配置,则初始化一个默认小助手配置
     if (!isset($cfg_helper_autoload))
     {
-        $cfg_helper_autoload = array('util', 'charset', 'string', 'time', 'cookie');
+        $cfg_helper_autoload = array('util', 'charset', 'string', 'time', 'cookie','debug','extend');
 
     }
     // 初始化小助手
@@ -152,21 +158,7 @@ if(is_writeable($sessSavePath) && is_readable($sessSavePath))
 }
 
 //系统配置参数
-require_once(DATA."/config.cache.inc.php");
-
-//载入小助手配置,并对其进行默认初始化
-if(file_exists(DATA.'/helper.inc.php'))
-{
-    require_once(DATA.'/helper.inc.php');
-    // 若没有载入配置,则初始化一个默认小助手配置
-    if (!isset($cfg_helper_autoload))
-    {
-        $cfg_helper_autoload = array('util', 'charset', 'string', 'time', 'cookie');
-
-    }
-    // 初始化小助手
-    helper($cfg_helper_autoload);
-}
+//require_once(DATA."/config.cache.inc.php");
 
 $adm_scope=array(
 'archives'=>'id,typ,typeid,sendate,trade,stock,market,price,sale,score,seller,flag,code,brand,spec,weight,litpic,picture,album,origin,title,words,descr,gbody',

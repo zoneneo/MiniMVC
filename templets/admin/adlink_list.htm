@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset={sun:global.cfg_soft_lang/}" />
+<title>{sun:global.cfg_webname/}</title>
+</head>
+<body class="articleview">
+<div class="listbox">
+<a href="index.php?ct=admin&ac=forms&to=adlink" class="title">新建一条记录</a>
+<table id="goods">
+<tbody>
+<tr><th>编号</th><th>分类</th><th>名称</th></tr>
+{sun:datalist pagesize='10'}
+<tr>
+<td>{sun:field.id/}<a href='?ct=admin&ac=record&to=adlink&key={sun:field.id/}'>{sun:field.id/}</a></td>
+<td><a href='?ct=admin&ac=record&to=adlink&key={sun:field.id/}'>{sun:field.title/}</a></td>
+</tr>
+{/sun:datalist}
+{sun:pagelist listitem="info,index,end,pre,next,pageno,option" pagesize="10" /}
+</tbody></table>
+</div>
+</body>
+</html>
