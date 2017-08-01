@@ -1,247 +1,42 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset={sun:global.cfg_soft_lang/}" />
+<meta http-equiv="Content-Type" content="text/html; charset={sun:global.cfg_lang/}" />
 <title>{sun:field.title/}_{sun:global.cfg_webname/}</title>
 <meta name="keywords" content="{sun:field.keywords/}" />
 <meta name="description" content="{sun:field.description function='html2text(@me)'/}" />
-<script type="text/javascript" src="{sun:global.cfg_indexurl/}/images/jquery-1.8.0.js"></script>
-<script type="text/javascript" src="{sun:global.cfg_indexurl/}/images/buyitems.js"></script>
-<link rel="stylesheet" type="text/css" href="{sun:global.cfg_indexurl/}/css/global.css" />
-<link rel="stylesheet" type="text/css" href="{sun:global.cfg_indexurl/}/css/show.css" />
+<script type="text/javascript" src="{sun:global.cfg_indexurl/}/images/js/jquery-1.8.0.js"></script>
+<script type="text/javascript" src="{sun:global.cfg_indexurl/}/images/js/buyitems.js"></script>
+<link rel="stylesheet" type="text/css" href="{sun:global.cfg_indexurl/}/images/css/global.css" />
+<link rel="stylesheet" type="text/css" href="{sun:global.cfg_indexurl/}/images/css/show.css" />
 </head>
 <body class="articleview">
 {sun:include filename="head2.htm"/}
 <!-- /header -->
-<div class="w960 center clear mt1">
-<div class="pleft">
-<div class="main margin pathinfo"><strong>当前位置:</strong> {sun:field name='position'/} </div>
-<!-- /place -->
-<div class="main showContent margin clearfix">
-<div class="gallery">
-<div id="detail">
-<div class="jqzoom_pm"> <img src="" alt=""> </div>
-</div>
-<div class="img_scroll">
-<div class="Prev"><span></span></div>
-<div class="img_list">
-<ul>
-{sun:albumlist}
-<li class=""><img src="[field:less/]" rel="[field:huge/]" maximg="[field:huge/]"></li>
-{/sun:albumlist}
-</ul>
-</div>
-<div class="Next"><span></span></div>
-</div>
-</div>
-<form action="javascript:addToCart(167)" method="post" name="ECS_FORMBUY" id="ECS_FORMBUY">
-<div class="property">
-<h2>{sun:field.title/}</h2>
-<div class="goods_info">{sun:field.descr/}</div>
-<div class="ProductD clearfix">
-<div class="productDL">
-<dl>
-<dt>总 重 量：</dt>
-<dd>0克</dd>
-</dl>
-<dl>
-<dt>售&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;价：</dt>
-<dd><span id="ECS_SHOPPRICE">￥{sun:field.price/}</span><del>市场价：￥{sun:field.market/}</del>
-</dd>
-</dl>
-<dl>
-<dt>库&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;存：</dt>
-<dd>{sun:field.stock/}</dd>
-</dl>
-<dl>
-<dt>上架时间：</dt>
-<dd>{sun:field.sendate function="GetDateTimeMK(@me)"/} </dd>
-</dl>
-<dl>
-<dt>销售评价：</dt>
-<dd>已售出<strong>{sun:field.trade/}</strong>件&nbsp;&nbsp;（54人评论）</dd>
-</dl>
-</div>
-</div>
-<div class="buyinfo" id="detail_buyinfo">
-<dl>
-<dt>购买数量</dt>
-<dd>
-<div class="buyinfo1"> <a href="javascript:void(0);" onclick="minus({sun:field.id/})">-</a>
-<input type="text" value="1" id="jid{sun:field.id/}" name="number">
-<a href="javascript:void(0);" onclick="plus({sun:field.id/})">+</a> </div>
-
-<div class="wrap_btn"> <a href="javascript:addon({sun:field.id/})" class="wrap_btn1" title="加入购物车"></a> 
-<a href="javascript:toCar({sun:field.id/})" class="wrap_btn2" title="立即购买"></a> </div>
-</dd>
-</dl>
-</div>
-<div class="ProductD clearfix">
-<div class="productDL"></div>
-</div>
-</div>
-</form>	
-</div>
 <div class="main clearfix">
-<div class="mainListLeft fl">
 <div class="listLeftMenu">
-<dl class="">
-<dt rel="off"><strong><a href="category-1-b0.html">原产地原生态·尚蔬坊</a></strong><span></span></dt>
-<dd class="clearfix"> 
-<span><a href="category-2-b0.html">蔬菜礼盒</a></span> 
-<span><a href="category-3-b0.html">丝瓜</a></span> 
-<span><a href="category-22-b0.html">辣椒</a></span> 
-<span><a href="category-23-b0.html">西红柿</a></span> 
-<span><a href="category-26-b0.html">苦瓜</a></span> 
-<span><a href="category-27-b0.html">茄子</a></span> 
-<span><a href="category-29-b0.html">冬瓜</a></span> 
-<span><a href="category-52-b0.html">黄瓜</a></span> 
-<span><a href="category-53-b0.html">土豆</a></span> 
-</dd>
-</dl>
-</div>
-<div class="hotSell">
-<h4>本周热销榜</h4>
-</div>
-<div id="history_div" class="hotSell" style="display: block;">
-<h4 id="clear_history"> 最近浏览过的 <a onclick="clear_history()" href="javascript:;" title="清空你的浏览记录">[清空]</a> </h4>
-<div id="history_list"></div>
-</div>
 </div>
 <div class="mainListRight fr" id="status1">
-<ul class="fixed_bar" style="">
-<li class="status_on active"><a href="#status1">产品介绍</a></li>
-<li class="status_on"><a href="#status2">商品评价<span>(54)</span></a></li>
-<li class="status_on"><a href="#shbz">售后服务</a></li>
-<div class="statusBtn" style="display: none;"><a href="javascript:addToCart_bak(167)" class="statusBtn1" title="加入购物车"></a></div>
-</ul>
-<div class="productContent">
-<div class="attributes-list">
-</div>
-<h3 class="techanPdcontent"><strong>产品介绍</strong><span>Product Ovierview</span></h3>
-<div class="techanProducts clearfix">
-</div>
-    <div class="description">
-    {sun:field.ggbody/}
-    </div>
-</div>
-<div class="productContent" id="status2">
-<div class="iComment clearfix">
-<div class="rate"><strong id="goodRate">100<span>%</span></strong><br>
-<span>好评度</span></div>
-<div class="percent" id="percentRate">
-<dl>
-<dt>好评<span>(100%)</span></dt>
-<dd>
-  <div style="width:100px;"></div>
-</dd>
-</dl>
-<dl>
-<dt>中评<span>(0%)</span></dt>
-<dd class="d1">
-  <div style="width:0;"> </div>
-</dd>
-</dl>
-<dl>
-<dt>差评<span>(0%)</span></dt>
-<dd class="d1">
-  <div style="width:0;"> </div>
-</dd>
-</dl>
-</div>
-<div class="actor">
-<dl>
-<dt>发表评价即可获得10积分，精华评论更有 <font color="red">额外奖励</font> 积分；<br>
-  还有7个多倍积分名额哦，赶紧抢占吧！<br>
-  只有购买过该商品的用户才能进行评价。</dt>
-<dd>&nbsp;</dd>
-</dl>
-</div>
-</div>
-<div class="commentBox" style="display:none;">
-<form action="javascript:;" onsubmit="submitComment(this)" method="post" name="commentForm" id="commentForm">
-<h3>商品评分</h3>
-<p class="tip">请直接点击相应的星级进行评分</p>
-<div id="star">
-<ul>
-  <li><span onclick="dorank(1)"></span>
-    <p>1分</p>
-    <p>非常不满意</p>
-  </li>
-  <li><span onclick="dorank(2)"></span>
-    <p>2分</p>
-    <p>不满意</p>
-  </li>
-  <li><span onclick="dorank(3)"></span>
-    <p>3分</p>
-    <p>一般</p>
-  </li>
-  <li><span onclick="dorank(4)"></span>
-    <p>4分</p>
-    <p>满意</p>
-  </li>
-  <li><span onclick="dorank(5)"></span>
-    <p>5分</p>
-    <p>非常满意</p>
-  </li>
-</ul>
-<input type="hidden" name="rank" id="rank" value="1">
-<input type="hidden" name="cmt_type" value="">
-<input type="hidden" name="id" value="167">
-<input type="hidden" name="email" id="email" value="null@mial.com">
-</div>
-<h4>评论内容</h4>
-<div class="bd">
-<textarea name="content" id="content" class="textarea_long" onkeyup="checkLength(this);"></textarea>
-<p class="g">
-  <label>&nbsp; </label>
-  <input type="submit" value="发表" class="btn_common">
-  <span t="word_calc" class="word"><b id="sy">0</b>/1000</span> </p>
-</div>
-</form>
-</div>
-<div id="ECS_COMMENT"> <div class="Comment">
-<div class="CommentTab">
-<ul>
-<li class="active" onclick="javascript:gotoPage(1,167,0,0);">全部评论(54)</li>
-<li onclick="javascript:gotoPage(1,167,0,3);">好评(54)</li>
-<li onclick="javascript:gotoPage(1,167,0,2);">中评(0)</li>
-<li onclick="javascript:gotoPage(1,167,0,1);">差评(0)</li>
-</ul>
-</div>
-<div class="CommentText" id="goodsdetail_comments_list" style="display:block">
-<ul class="clearfix">
-<li></li>
-</ul>
-<div class="page">
-<div class="page1"> <span class="f_l f6" style="margin-right:10px;">共 <b>54</b> 条评论</span>
-<p id="commentPager_4"> 
-<a href="javascript:gotoPage(1,167,0,0)">首页</a>          <a class="prev" href="javascript:;">上一页</a>                    <a class="next" href="javascript:gotoPage(2,167,0,0)">下一页</a>          <a class="last" href="javascript:gotoPage(11,167,0,0)">尾页</a>	   </p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div id="shbz"></div>
-<div class="productContent Service startWork">
-<h4>售后保障</h4>
-<p>非质量问题的退货，请在收到宝贝后七天内联系客服，如属质量问题，由本店承担运费。<br>        </p>
-<h3>关于快递<span>About the Courier</span></h3>
-<p>我们默认使用普通快递，如发其它快递、EMS，请联系我们在线客服！</p>
-<h3>关于发货<span>About Delivery</span></h3>
-<p>每日下午3:00以前的顾客，均可以当天发货，3:00以后的顾客，次日发货。</p>
-<h3>色差说明<span>Component Description</span></h3>
-<p style="border:0 none;">因拍摄灯光及不同显示器色差等问题可能造成商品图片与实物有色差,一切以实物为准。</p>
-</div>
-<div class="RelatedProducts">
-<h3>浏览过此商品的用户还关注过</h3>
-<ul>
- </ul>
-</div>
-</div>
-</div>
 
+  <div class="productContent">
+    <h3 class="techanPdcontent"><strong>产品介绍</strong><span>Product Ovierview</span></h3>
+    <h1>{sun:field.title/} </h1><small>发布 {sun:field.pubdate function="GetDateMk(@me)"}  点赞 {sun:field.click/}</small>
+    <div class="description">
+    {sun:field.gbody/}
+    </div>
+  </div>
+
+  <div class="productContent Service startWork">
+    <h3 class="techanPdcontent"><strong>广告链接</strong><span>Product Ovierview</span></h3>
+    <ul>
+    {sun:adlist}
+    <li class=""><a href="http://[field:link/]"><img src="[field:litpic/]" rel="" width="[field:width/]" height="[field:height/]"> [field:title/]</a>
+    <p>[field:[field:title/]</p>
+    </li>
+    {/sun:adlist}
+    </ul>
+  </div>
+</div>
  {sun:include filename="footer.htm"/}
 <!-- /footer -->
 </body>
