@@ -47,7 +47,8 @@ if (empty($_FILES) === false) {
 	}
 	//检查目录写权限
 	if (@is_writable($save_path) === false) {
-		alert("上传目录没有写权限。");
+		#alert("上传目录{$save_path}没有写权限。");
+		alert($save_path);
 	}
 	//检查是否已上传
 	if (@is_uploaded_file($tmp_name) === false) {

@@ -1,0 +1,8 @@
+子栏目调用标签
+>>sun>>
+{sun:sonchannel}
+<a href='[field:typeurl/]'>[field:typename/]</a>
+{/sun:sonchannel}
+>>sun>>
+row ='100' 返回数目
+col = '1'  默认单列显示

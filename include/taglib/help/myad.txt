@@ -1,0 +1,7 @@
+广告调用
+>>sun>>
+{sun:myad name=''/}
+>>sun>>
+typeid='0' 投放范围,0为全站
+name='' 广告标识
+	

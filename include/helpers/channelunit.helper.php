@@ -318,7 +318,7 @@ if ( ! function_exists('GetParentIds'))
         $GLOBALS['pTypeArrays'][] = $tid;
         if(!is_array($cfg_Cs))
         {
-            require_once(SUNDATA."/cache/inc_catalog_base.inc");
+            require_once(DATA."/cache/inc_catalog_base.inc");
         }
         if(!isset($cfg_Cs[$tid]) || $cfg_Cs[$tid][0]==0)
         {
@@ -363,7 +363,7 @@ if ( ! function_exists('GetTopid'))
         global $cfg_Cs;
         if(!is_array($cfg_Cs))
         {
-            require_once(SUNDATA."/cache/inc_catalog_base.inc");
+            require_once(DATA."/cache/inc_catalog_base.inc");
         }
         if(!isset($cfg_Cs[$tid][0]) || $cfg_Cs[$tid][0]==0)
         {
@@ -391,7 +391,7 @@ function GetSonIds($id,$addthis=true)
     $GLOBALS['idArray'] = array();
     if( !is_array($cfg_Cs) )
     {
-        require_once(SUNDATA."/cache/inc_catalog_base.inc");
+        require_once(DATA."/cache/inc_catalog_base.inc");
     }
     GetSonIdsLogic($id,$cfg_Cs,$addthis);
     $rquery = join(',',$GLOBALS['idArray']);
@@ -544,7 +544,7 @@ function MakeOneTag(&$dtp, &$refObj, $parfield='Y')
         {
             if(in_array($tagname, $disable_tags))
             {
-                if(DEBUG_LEVEL) echo 'SunCMS Error:Tag disabled:"'.$tagname.'" <a href="http://help.suncms.com/install-use/apply/2013/0711/2324.html" target="_blank">more...</a>!';
+                if(DEBUG_LEVEL) echo 'SunCMS Error:Tag disabled:"'.$tagname.'" !';
                 continue;
             }
             if (DEBUG_LEVEL==TRUE) {
@@ -751,7 +751,7 @@ function Quote_replace($quote)
 function GetCacheBlock($cacheid)
 {
     global $cfg_puccache_time;
-    $cachefile = SUNDATA.'/cache/'.$cacheid.'.inc';
+    $cachefile = DATA.'/cache/'.$cacheid.'.inc';
     if(!file_exists($cachefile) || filesize($cachefile)==0 || 
       $cfg_puccache_time==0 || time() - filemtime($cachefile) > $cfg_puccache_time)
     {
@@ -772,7 +772,7 @@ function GetCacheBlock($cacheid)
  */
 function WriteCacheBlock($cacheid, $str)
 {
-    $cachefile = SUNDATA.'/cache/'.$cacheid.'.inc';
+    $cachefile = DATA.'/cache/'.$cacheid.'.inc';
     $fp = fopen($cachefile, 'w');
     $str = fwrite($fp, $str);
     fclose($fp);

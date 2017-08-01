@@ -24,22 +24,36 @@
 			$this->SetTemplate($to."_list.htm","admin");
 			$this->Display();
 		}
-		public function ac_goods()
+		public function ac_arclist()
 		{
 			global $_REQUEST;
 			extract($_REQUEST);
-			// require_once(SUNINC."/list.class.php");
-			// $tempfile = SUNTPL."/default/archives_list.htm";
-			// $tid = is_numeric($tid) ? $tid : 0;
-			// $lv = new ListView($tid);
-
+			$GLOBALS['sql_table']=$to;
+			$GLOBALS['PageNo']=is_numeric($PageNo)? $PageNo : 1;
+			if(isset($typeid)){
+				$GLOBALS['sql_where']='typeid';
+				$GLOBALS['sql_value']=$typeid;
+			}
 			require_once(SUNINC."/dblist.class.php");
-			$GLOBALS['cfg_to_table']=$to;
-			$lv = new ListView($to);
-
-			$lv->Display();	
+			$lv = new ListView($to,$typeid);
+			$lv->Display();
 		}
 		public function ac_record()
+		{
+			global $_REQUEST;
+			extract($_REQUEST);
+			$GLOBALS['cfg_cur_tname']=$to;
+			$arr=$this->assemble($to,$ac);
+			$tpl=$to."_record.htm";
+			$tmp=$this->GetTemplate($tpl,"admin");
+			if(!file_exists($tmp)){
+				$this->BuildForm($tmp,"update");
+			}			
+			$this->SetTemplate($tpl,"admin");
+			$this->SetVar('arr',$arr);
+			$this->Display();
+		}
+		public function ac_forms()
 		{
 			global $_REQUEST;
 			extract($_REQUEST);
@@ -48,7 +62,7 @@
 			$tpl=$to."_form.htm";
 			$tmp=$this->GetTemplate($tpl,"admin");
 			if(!file_exists($tmp)){
-				$this->BuildForm($tmp,"update");
+				$this->BuildForm($tmp,"insert");
 			}			
 			$this->SetTemplate($tpl,"admin");
 			$this->SetVar('arr',$arr);
@@ -77,23 +91,18 @@
 		}
 		public function ac_auth(){
 			global $_REQUEST,$_SESSION;
-			// $pwd=md5($_REQUEST["pass"]);
-			$pwd=$_REQUEST["pass"];
+			$pwd=md5($_REQUEST["pass"]);
 			$usr=trim($_REQUEST["user"]);
-			// $row=$this->Model('store')->GetOne("SELECT * FROM #@__admin WHERE usr='$usr' AND pwd='$pwd'");
-			// if(!empty($row)){
-			// 	$_SESSION["USERNAME"]=$row['usr'];
-			// 	$_SESSION["USERLEVEL"]=$row['id'];
-			// 	$this->SetTemplate("admin_index.htm","admin");
-			// 	$this->Display();
-			// }else{
-			// 	Message('警告','账号或密码错误');
-			// 	exit(0);	
-			// }
-			$_SESSION["USERNAME"]=$usr;
-			$_SESSION["USERLEVEL"]=100;
-			$this->SetTemplate("admin_index.htm","admin");
-			$this->Display();
+			$row=$this->Model('store')->GetOne("SELECT * FROM #@__admin WHERE usr='$usr' AND pwd='$pwd'");
+			if(!empty($row)){
+				$_SESSION["USERNAME"]=$row['usr'];
+				$_SESSION["USERLEVEL"]=$row['id'];
+				$this->SetTemplate("admin_index.htm","admin");
+				$this->Display();
+			}else{
+				Message('警告','账号或密码错误');
+				exit(0);	
+			}
 		}
 		public function ac_login()
 		{
@@ -129,14 +138,14 @@
 				$flds=implode(",",array_keys($allow));
 				$vars=implode("','",$allow);
 				foreach($allow as $k=>$v){
-					$vals .="$k =@{$k},";
+					$vals .="$k='{$v}',";
 				}
 				$vals= preg_replace('/\,$/', '', $vals);
 			}
 			$QLS['record'] = "SELECT * FROM #@__{$tname} WHERE id =:key";
-			$QLS['remove'] = "DELETE FROM #@__{$tname} WHERE id = {$key}";
-			$QLS['update'] = "UPDATE #@__{$tname} SET {$vals} WHERE id ={$key} ";
-			$QLS['insert'] = "INSERT INTO #@__{$tname} ({$flds}) VALUES('{$vars}')";
+			$QLS['remove'] = "DELETE FROM #@__{$tname} WHERE id ={$key}";
+			$QLS['update'] = "UPDATE #@__{$tname} SET {$vals} WHERE id={$key} ";
+			$QLS['insert'] = "INSERT #@__{$tname} ({$flds}) VALUES ('{$vars}')";
 			if(array_key_exists($ac,$QLS)){
 				$ql=$mod->SetQuery($QLS[$ac]);
 				if($ac=='record'){
@@ -157,7 +166,7 @@
 			foreach ( $_REQUEST as $key => $val )
 			{
 				if (in_array($key, $scope)){
-					$allow[$key] = $val;
+					$allow[$key] = str_replace("'", "&apos;", $val);
 				}
 			}
 		}

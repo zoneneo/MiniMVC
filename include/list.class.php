@@ -98,7 +98,6 @@ class ListView
         #$tempfile = SUNTPL."/default/list_default.htm";
         $tempfile = SUNTPL."/".$this->TypeLink->TypeInfos['templist'];
         $tempfile = str_replace("{tid}", $this->TypeID, $tempfile);
-        echo 'temp file: '.$tempfile;
 
         if(!file_exists($tempfile)||!is_file($tempfile))
         {
@@ -242,7 +241,7 @@ class ListView
                 if($row = $this->dsql->GetArray("al"))
                 {
                     $GLOBALS['autoindex']++;
-                    //function GetFileUrl($aid,$typeid,$timetag,$title,$ismake=0,$rank=0,$namerule='',$typedir='', $money=0, $filename='',$moresite=0,$siteurl='',$sitepath='')
+
                     $row['filename'] = $row['arcurl'] = GetFileUrl($row['id'],$row['typeid'],$row['senddate'],$row['title'],0,0,$row['namerule'],$row['typedir'],$row['filename']);
                     $row['typeurl'] = GetTypeUrl($row['typeid'],MfTypedir($row['typedir']),$row['isdefault'],$row['defaultname'],$row['namerule2'],$row['siteurl']);
                     if($row['litpic'] == '-' || $row['litpic'] == '')
@@ -251,7 +250,7 @@ class ListView
                     }
                     if(!preg_match("/^http:\/\//i", $row['litpic']))
                     {
-                        $row['litpic'] = $GLOBALS['cfg_cmspath'].$GLOBALS['cfg_mediasurl'].'/'.$row['litpic'];
+                        $row['litpic'] = $GLOBALS['cfg_cmspath'].$row['litpic'];
                     }
                     if(preg_match('/c/', $row['flag']))
                     {
@@ -428,7 +427,6 @@ class ListView
         {
             $totalpage = 1;
         }
-        echo '<br>typedir is:'.MfTypedir($this->Fields['typedir']);
         CreateDir(MfTypedir($this->Fields['typedir']));
         $murl = '';
         if($makepagesize > 0)
@@ -457,6 +455,7 @@ class ListView
             {
                 $makeFile = "/".$makeFile;
             }
+
             $makeFile = $this->GetTruePath().$makeFile;
             $makeFile = preg_replace("/\/{1,}/", "/", $makeFile);
             $murl = $this->GetTrueUrl($murl);
@@ -464,17 +463,12 @@ class ListView
         }
         if($startpage==1)
         {
-            //如果列表启用封面文件，复制这个文件第一页
-            if($this->TypeLink->TypeInfos['isdefault']==1
-            && $this->TypeLink->TypeInfos['ispart']==0)
-            {
-                $onlyrule = $this->GetMakeFileRule($this->Fields['id'],"list",$this->Fields['typedir'],'',$this->Fields['namerule2']);
-                $onlyrule = str_replace("{page}","1",$onlyrule);
-                $list_1 = $this->GetTruePath().$onlyrule;
-                $murl = MfTypedir($this->Fields['typedir']).'/'.$this->Fields['defaultname'];
-                $indexname = $this->GetTruePath().$murl;
-                copy($list_1,$indexname);
-            }
+            $onlyrule = $this->GetMakeFileRule($this->Fields['id'],"list",$this->Fields['typedir'],'',$this->Fields['namerule2']);
+            $onlyrule = str_replace("{page}","1",$onlyrule);
+            $list_1 = $this->GetTruePath().$onlyrule;
+            $murl = MfTypedir($this->Fields['typedir']).'/'.$this->Fields['defaultname'];
+            $indexname = $this->GetTruePath().$murl;
+            copy($list_1,$indexname);
         }
         return $murl;
     }

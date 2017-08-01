@@ -22,26 +22,31 @@ define('MODEL', SUNINC.'/model');
 define('CONTROL', SUNINC.'/control');
 define('DATA', SUNROOT.'/data');
 define('SUNTPL', SUNROOT.'/templets');
-define('ATTACH', SUNROOT.'/static');
+define('ATTACH', SUNROOT.'/images');
 define('CACHE', SUNROOT.'/data/tplcache');
 
-//模板的存放目录
-$cfg_df_style = "default";
-$cfg_templets_dir = SUNTPL;
-$cfg_tplcache_dir = CACHE;
-
 //other
-
 $cfg_lang = 'utf8';
 $cfg_site = $_SERVER["HTTP_HOST"];
+$cfg_templets_dir = SUNTPL;
+$cfg_tplcache_dir = CACHE;
 $cfg_basehost = 'http://'.$cfg_site;
-$cfg_cmspath= str_replace($_SERVER["DOCUMENT_ROOT"], '', SUNROOT);
+#$cfg_cmspath= str_replace($_SERVER["DOCUMENT_ROOT"], '', SUNROOT);
+$cfg_cmspath= '';
 $cfg_api ='http://api.xx.com';
-$cfg_basedir=$cfg_cmspath;
-$cfg_mediasurl='/static/upload';
+$cfg_mediasurl='/upload';
 $app_url = '/index.html?page=';
 
 $cfg_basedir=SUNROOT;
+$cfg_templets_dir = '/templets';
+$cfg_df_style = "default";
+$cfg_dir_purview=0777;
+
+
+$cfg_indexurl = $cfg_basehost;
+$cfg_indexname = 'home';
+$cfg_webname = '导流体';
+$cfg_arcdir = '/a';
 
 $cfg_list_symbol='>>';
 $cfg_multi_site = 'Y';
@@ -51,6 +56,8 @@ $cookie_encode = 'Genetalks';
 $sms_url='http://service.winic.org/sys_port/gateway/';
 $sms_arg=array('id'=>"vnsoft",'pwd'=>"gamedemorhwl",'to'=>'','content'=>'','time'=>0);
 $sms_tip=' 验证码请在30分钟内填写! ';
+
+
 
 
 /*定义微信公众号参数*/

@@ -1,0 +1,9 @@
+会员信息调用标签
+>>sun>>
+{sun:memberlist orderby='scores' row='20'}
+<a href="../member/index.php?uid={sun:field.userid /}">{sun:field.userid /}</a>
+<span>{sun:field.scores /}</span>
+{/sun:memberlist}
+>>sun>>
+orderby = 'scores' 按积分排序
+row = '6' 调用数目

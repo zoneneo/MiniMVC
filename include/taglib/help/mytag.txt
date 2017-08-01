@@ -1,0 +1,6 @@
+自定义宏标记调用标签
+>>sun>>
+{sun:mytag typeid='0' name=''/}
+>>sun>>
+typeid = '0' 栏目ID 0为全站栏目
+name = '' 标记名

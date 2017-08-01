@@ -37,11 +37,8 @@ else if($action=='make')
     function _2_MakeArchives()
     ---------------------*/
     else if($step==2)
-    {
-		echo 'SUNADMIN=';
-		echo SUNADMIN;		
+    {	
         include_once(SUNADMIN."/makehtml_archives_action.php");
-
         exit();
     }
     //更新主页

@@ -1,7 +1,8 @@
 <?php
-	require_once("../include/config.inc.php");
+	//require_once("../include/config.inc.php");
+	require_once("config.php");
 	require_once(SUNINC."/tree.class.php");
-	session_start();
+	//session_start();
 	header("Content-Type: text/html; charset=utf-8");
 	if($_SESSION['USERNAME']==''){
 		echo "<h1>权限不够请登录！</h1>";
@@ -26,15 +27,15 @@
 	{
 		$ql=$dsql->SetQuery("insert into #@__arctype (reid,typename) values ('$tid','$sot')");
 		$dsql->exec($ql);
-		header('Location:'.$act);
-		exit();	
+		//header('Location:'.$act);
+		//exit();	
 	}
 	else if($cmd=="2")
 	{
 		$ql=$dsql->SetQuery("update #@__arctype set typename='$sot' where id='$tid'");
 		$dsql->exec($ql);
-		header('Location:'.$act);
-		exit();	
+		//header('Location:'.$act);
+		//exit();	
 	}
 	else if($cmd=="3")
 	{
@@ -42,8 +43,8 @@
 			$ql=$dsql->SetQuery("update #@__arctype set reid='$sot' where id='$tid'");
 			$dsql->exec($ql);
 		}
-		header('Location:'.$act);
-		exit();	
+		//header('Location:'.$act);
+		//exit();	
 	}	
 	else if($cmd=="4")
 	{
@@ -53,17 +54,17 @@
 			$ql=$dsql->SetQuery("DELETE FROM #@__arctype WHERE id in ($ids)");
 			$dsql->exec($ql);
 		}
-		header('Location:'.$act);
-		exit();	
+		//header('Location:'.$act);
+		//exit();	
 	}
 	if($cmd=="1"||$cmd=="2"||$cmd=="3"||$cmd=="4"){
-		//UpDateCatCache();
+		UpDateCatCache();
 		header('Location:'.$act);
 		exit();	
 	}
 	
 	$cont='';
-	$result =$bjt->Stack($kys,1);
+	$result =$bjt->Stack($kys,0);
 	foreach($result as $k)
 	{
 	

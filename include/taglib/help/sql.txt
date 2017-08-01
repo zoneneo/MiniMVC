@@ -1,0 +1,7 @@
+SQL标签
+>>sun>>
+{sun:sql sql=''}
+[field:title/]
+{/sun}
+>>sun>>
+sql='' 完整的SQL语句

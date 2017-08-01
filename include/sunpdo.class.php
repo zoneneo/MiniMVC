@@ -82,6 +82,12 @@ class SunPdo extends PDO {
         return $this->result[$id]->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT);
     }
 
+    //返回当前的一条记录并把游标移向下一记录
+    function GetObject($id="me")
+    {
+        return $this->result[$id]->fetch(PDO::FETCH_OBJ, PDO::FETCH_ORI_NEXT);
+    }
+
     //设置SQL语句，会自动把SQL语句里的#@__替换为$this->dbPrefix(在配置文件中为$cfg_dbprefix)
     function SetQuery($sql)
     {

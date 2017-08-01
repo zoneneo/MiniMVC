@@ -1,0 +1,5 @@
+单页文档调用标签
+>>sun>>
+{sun:likespage row=''/}
+>>sun>>
+row = '' 调用条数

@@ -1,0 +1,7 @@
+指定的单个栏目的链接标签
+>>sun>>
+{sun:type}
+<a href="[field:typelink /]">[field:typename /]</a>
+{/sun:type}
+>>sun>>
+typeid='' 指定栏目ID

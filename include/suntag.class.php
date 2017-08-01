@@ -764,7 +764,8 @@ class SunTagParse
      */
     function SaveTo($filename)
     {
-        $fp = @fopen($filename,"w") or die("SunTag Engine Create File False");
+        //$fp = @fopen($filename,"w") or die("SunTag Engine Create File False");
+        $fp = fopen($filename,"w") or die("SunTag Engine Create File False");
         fwrite($fp,$this->GetResult());
         fclose($fp);
     }

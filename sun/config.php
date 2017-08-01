@@ -12,6 +12,14 @@ define('SUNADMIN', str_replace("\\", '/', dirname(__FILE__) ) );
 header('Cache-Control:private');
 
 
+
+//模板的存放目录
+$cfg_basedir=SUNROOT;
+$cfg_templets_dir = '/templets';
+$cfg_df_style = "default";
+$cfg_dir_purview=0777;
+
+
 //获得当前脚本名称，如果你的系统被禁用了$_SERVER变量，请自行更改这个选项
 
 $isUrlOpen = @ini_get('allow_url_fopen');
@@ -27,10 +35,10 @@ $cfg_remote_site = empty($cfg_remote_site)? 'N' : $cfg_remote_site;
 // $cuserLogin = new userLogin();
 
 
-// $cache1 = DATA.'/cache/inc_catalog_base.inc';
-// if(!file_exists($cache1)) UpDateCatCache();
-// $cacheFile = DATA.'/cache/admincat_'.$cuserLogin->userID.'.inc';
-// if(file_exists($cacheFile)) require_once($cacheFile);
+$cache1 = DATA.'/cache/inc_catalog_base.inc';
+if(!file_exists($cache1)) UpDateCatCache();
+$cacheFile = DATA.'/cache/admincat_'.$cuserLogin->userID.'.inc';
+if(file_exists($cacheFile)) require_once($cacheFile);
 
 
 
@@ -45,17 +53,17 @@ $cfg_remote_site = empty($cfg_remote_site)? 'N' : $cfg_remote_site;
  
 function UpDateCatCache()
 {
-    global $dsql, $cfg_multi_site, $cache1, $cacheFile, $cuserLogin;
-    $cache2 = DATA.'/cache/channelsonlist.inc';
-    $cache3 = DATA.'/cache/channeltoplist.inc';
-    $dsql->SetQuery("SELECT id,reid,typename FROM `#@__arctype`");
-    $dsql->Execute();
+    global $dsql, $cfg_multi_site, $cache1, $cacheFile;
+    //$cache2 = DATA.'/cache/channelsonlist.inc';
+    //$cache3 = DATA.'/cache/channeltoplist.inc';
+    $dsql->Execute('cc',"SELECT id,reid,typename FROM `#@__arctype`");
     $fp1 = fopen($cache1,'w');
     $phph = '?';
     $fp1Header = "<{$phph}php\r\nglobal \$cfg_Cs;\r\n\$cfg_Cs=array();\r\n";
     fwrite($fp1,$fp1Header);
-    while($row=$dsql->GetObject())
+    while($row=$dsql->GetObject('cc'))
     {
+        print_r($row);
         // 将typename缓存起来
         $row->typename = base64_encode($row->typename);
         fwrite($fp1,"\$cfg_Cs[{$row->id}]=array({$row->reid},'{$row->typename}');\r\n");
@@ -63,8 +71,8 @@ function UpDateCatCache()
     fwrite($fp1, "{$phph}>");
     fclose($fp1);
     //$cuserLogin->ReWriteAdminChannel();
-    @unlink($cache2);
-    @unlink($cache3);
+    //@unlink($cache2);
+    //@unlink($cache3);
 }
 
 
